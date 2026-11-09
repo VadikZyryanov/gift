@@ -30,8 +30,20 @@ npm run preview
 `https://vadikzyryanov.github.io/gift/`. При переименовании репозитория нужно
 обновить `base`.
 
-Публикация ещё не настроена. После push следующим шагом будет включение GitHub
-Pages и добавление GitHub Actions workflow для сборки и публикации `dist/`.
+Публикация выполняется через `.github/workflows/deploy.yml`: после push в `master`
+workflow устанавливает зависимости, собирает проект и публикует содержимое `dist/`.
+
+1. В настройках репозитория открой **Settings → Pages**.
+2. В разделе **Build and deployment → Source** выбери **GitHub Actions**.
+3. Сделай commit и push файла workflow в `master`.
+4. Во вкладке **Actions** дождись успешного завершения **Deploy to GitHub Pages**.
+5. Открой `https://vadikzyryanov.github.io/gift/`.
+
+Workflow также можно запустить вручную через **Actions → Deploy to GitHub Pages →
+Run workflow**. Публиковать исходный `index.html` из корня репозитория нельзя:
+браузеру нужны JavaScript и CSS из production build.
+
+Подробнее: [публикация Vite на GitHub Pages](https://vite.dev/guide/static-deploy.html#github-pages).
 
 ## Структура
 
