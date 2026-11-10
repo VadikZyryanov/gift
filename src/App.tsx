@@ -1,29 +1,41 @@
 import { useState } from 'react';
+import { AudioProvider, useAudio } from './audio/AudioProvider';
+import { SoundToggle } from './audio/SoundToggle';
+import { ChestScene } from './finale/ChestScene';
+import { LetterScene } from './finale/LetterScene';
+import { FinaleScene } from './finale/FinaleScene';
 import { GameMenu } from './components/GameMenu';
 import { StorageNotice } from './components/StorageNotice';
 import { GameProvider, useGame } from './game/GameProvider';
 import { PouchScene } from './scene/PouchScene';
 import { TableScene } from './scene/TableScene';
 import './scene/scene.css';
+import './finale/finale.css';
 
 function Game() {
   const { progress, send } = useGame();
+  const { playEffect } = useAudio();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <>
-      {progress.scene.kind !== 'pouch' && !menuOpen && <StorageNotice />}
+      {progress.scene.kind === 'table' && !menuOpen && <StorageNotice />}
       <TableScene
         completedPouches={progress.completedPouches}
         onOpenPouch={pouchId => send({ type: 'navigate', scene: { kind: 'pouch', pouchId } })}
         onOpenMenu={() => setMenuOpen(true)}
+        onOpenChest={() => { send({ type: 'open-chest' }); playEffect('unlock'); }}
+        soundControl={<SoundToggle />}
       />
       {progress.scene.kind === 'pouch' && <PouchScene key={progress.scene.pouchId} pouchId={progress.scene.pouchId} />}
+      {progress.scene.kind === 'chest' && <ChestScene />}
+      {progress.scene.kind === 'letter' && <LetterScene />}
+      {progress.scene.kind === 'finale' && <FinaleScene />}
       {menuOpen && <GameMenu onClose={() => setMenuOpen(false)} />}
     </>
   );
 }
 
 export default function App() {
-  return <GameProvider><Game /></GameProvider>;
+  return <GameProvider><AudioProvider><Game /></AudioProvider></GameProvider>;
 }

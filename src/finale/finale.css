@@ -1,0 +1,27 @@
+.sound-toggle { display: grid; width: 44px; height: 44px; padding: 8px; place-items: center; border: 0; border-radius: 50%; background: #fff0e645; color: var(--berry); }
+.sound-toggle svg { width: 28px; height: 28px; }
+.table-heading > .sound-toggle { position: absolute; right: -4px; top: -8px; }
+.chest-reveal { position: relative; width: min(100%, 360px); margin: 24px auto 0; }
+.chest-reveal__glow { position: absolute; inset: 8% 10%; border-radius: 50%; background: radial-gradient(ellipse, #ffe8a1aa, #ffe4c14d 45%, transparent 70%); pointer-events: none; animation: chest-light 1s ease-out; }
+.chest-reveal__chest { position: relative; display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: contain; animation: treasure-arrive .65s ease-out; }
+.finale-handwriting { margin: 16px 0; color: var(--berry); font-family: var(--handwriting); font-size: 1.65rem; line-height: 1.35; overflow-wrap: anywhere; }
+.envelope-button { display: block; width: min(100%, 280px); min-height: 48px; margin: 16px auto 0; padding: 0 0 12px; border: 0; background: none; color: #74364e; }
+.envelope-button img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: contain; animation: envelope-arrive .8s ease-out; }
+.envelope-button > span { display: block; padding: 12px 16px; border: 1px solid #c8a174; border-radius: 999px; background: #fff0dc; font-size: .9375rem; line-height: 1.5; overflow-wrap: anywhere; }
+.content-draft { margin: 16px 0; color: #805b72; font-size: .8125rem; line-height: 1.7; overflow-wrap: anywhere; }
+.love-letter { position: relative; margin: 24px 0; padding: 24px 20px; border: 1px solid #dfbc9f; border-radius: 4px 16px 4px 16px; background: linear-gradient(115deg, #fff9ec, #ffefdc 75%, #fae4ce); box-shadow: 0 8px 24px #79435012; text-align: left; font-size: 1rem; line-height: 1.95; overflow-wrap: anywhere; animation: letter-unfold .6s ease-out; }
+.love-letter p { margin: 0 0 20px; }
+.love-letter p:last-child { margin-bottom: 0; }
+.love-letter .love-letter__greeting, .love-letter .love-letter__signature { color: #8b3d56; font-family: var(--handwriting); font-size: 1.65rem; line-height: 1.45; }
+.love-letter__signature { text-align: right; }
+.voice-message { margin-block: 24px; }
+.voice-message__status { margin: 12px 0 0; font-size: .8125rem; line-height: 1.75; overflow-wrap: anywhere; }
+.second-bottom { margin-top: 32px; padding-top: 24px; border-top: 1px dashed #c8a9ba; }
+.second-bottom__thread { display: block; margin: auto; color: #b88b50; font-size: 2rem; }
+.finale-keepsake { display: grid; width: min(100%, 200px); aspect-ratio: 1.25; place-items: center; margin: 32px auto 24px; border: 1px solid #dbc2a4; border-radius: 8px 24px; background: #fff2dd; box-shadow: 0 8px 24px #79435015; transform: rotate(-3deg); animation: treasure-arrive .6s ease-out; }
+.finale-keepsake > span { color: var(--berry); font-family: var(--handwriting); font-size: 4rem; }
+.finale-copy { margin: 16px 0; font-size: 1rem; line-height: 1.85; overflow-wrap: anywhere; }
+@keyframes treasure-arrive { from { opacity: .2; transform: translateY(12px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes chest-light { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes envelope-arrive { from { opacity: 0; transform: translateY(16px) rotate(-4deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+@keyframes letter-unfold { from { opacity: .2; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }

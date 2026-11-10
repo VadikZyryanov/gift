@@ -2,6 +2,14 @@ export const pouchIds = ['beginning', 'journey', 'proposal', 'family'] as const;
 
 export type PouchId = (typeof pouchIds)[number];
 
+export interface LetterContent {
+  status: 'draft' | 'ready';
+  greeting: string;
+  paragraphs: readonly string[];
+  signature: string;
+  voiceSrc: string | null;
+}
+
 export interface PouchPreview {
   title: string;
   subtitle: string;

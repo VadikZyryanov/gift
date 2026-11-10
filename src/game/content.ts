@@ -2,7 +2,7 @@ import dubaiImage from '../assets/content/journey-dubai.webp';
 import turkeyImage from '../assets/content/journey-turkey.webp';
 import egyptImage from '../assets/content/journey-egypt.webp';
 import familyImage from '../assets/content/family-keepsakes.webp';
-import type { PouchContent, PouchId, QuizTaskDefinition } from './types';
+import type { LetterContent, PouchContent, PouchId, QuizTaskDefinition } from './types';
 
 // Facts and order confirmed by the owner; hints, distractors and replies are draft copy.
 const beginningTask: QuizTaskDefinition = {
@@ -67,6 +67,19 @@ export const gameContent = {
   dedication: 'Для моей булочки',
   instruction: 'Выбери сумочку — в каждой маленькая тайна.',
   signature: 'Собрал с любовью. Для тебя.',
+  letter: {
+    status: 'draft',
+    greeting: 'Булочка моя,',
+    paragraphs: [
+      'В этих сумочках — несколько маленьких историй о нас. Но самое важное никогда не помещается ни в чемодан, ни даже в большой сундук.',
+      'Пляж, первые цветы, наше свидание и песня — столько тёплых воспоминаний. Были дороги, Дубай и Турция. А потом — тот самый вопрос, наша свадьба и целый мир, который мы создаём вместе.',
+      'Теперь в нашем мире есть Святослав. Мне хочется, чтобы за всеми новыми заботами у тебя оставалось место и для себя: выдохнуть, отдохнуть, почувствовать тепло и просто побыть в тишине.',
+      'Этот маленький подарок — приглашение к такому дню. Без спешки и списка дел. С заботой о тебе, о твоём отдыхе и о том, что делает тебя счастливой.',
+      'Я люблю нашу большую историю, но ещё больше — тебя. И мне хочется продолжать собирать для тебя маленькие радости. Просто потому, что ты моя любимая булочка.',
+    ],
+    signature: 'Собрал с любовью. Для тебя.',
+    voiceSrc: null,
+  } satisfies LetterContent,
   pouches: {
     beginning: {
       status: 'draft',

@@ -13,11 +13,15 @@ export default defineConfig({
     baseURL: previewUrl,
     trace: 'retain-on-failure',
   },
-  webServer: {
+  webServer: [{
     command: 'npm run preview -- --host 127.0.0.1 --port 4173 --strictPort',
     url: previewUrl,
     reuseExistingServer: !process.env.CI,
-  },
+  }, {
+    command: 'npm run dev -- --host 127.0.0.1 --port 4174 --strictPort',
+    url: 'http://127.0.0.1:4174/gift/e2e/fixtures/letter.html',
+    reuseExistingServer: !process.env.CI,
+  }],
   projects: [
     {
       name: 'mobile-webkit',

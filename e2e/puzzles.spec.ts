@@ -64,8 +64,8 @@ for (const order of [
     }
     await expect(page.getByText('Ключи: 4 из 4', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Сундук', exact: true }).click();
-    await expect(page.locator('#chest-hint')).toContainText('Все ключи нашлись');
-    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('gift:progress:v1') ?? '{}').chestOpened)).toBe(false);
+    await expect(page.getByRole('dialog', { name: 'Самое тёплое — внутри' })).toBeVisible();
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('gift:progress:v1') ?? '{}').chestOpened)).toBe(true);
   });
 }
 

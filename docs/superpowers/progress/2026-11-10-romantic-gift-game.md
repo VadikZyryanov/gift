@@ -1,8 +1,30 @@
 # Implementation ledger — plan: docs/superpowers/plans/2026-11-10-romantic-gift-game-implementation.md
 
+## Stage 4 — technically complete, awaiting owner review
+
+- Owner requested the next checkpoint after committing stage 3. Scope: chest, envelope, draft letter, second bottom and optional audio. No Git operations or publication.
+- Pre-flight 3→4: existing opening events/flags and storage already model stable scenes; reconnect the table callback only with real finale components. Audio owns transient playback, never progress storage. Stage 5 alone adds secret totals; stage 7 adds gift selection.
+- Ruling: preserve revision 2 and the existing reducer — opening guards and all three reload round-trips pass new tests already; no save migration is necessary. Cost if wrong: incompatible content would need a later explicit revision.
+- Ruling: show an explicitly marked editorial letter draft, with no voice player until a real voiceSrc exists — the plan permits draft copy and requires a complete text fallback. Cost if wrong: the owner must replace/approve wording and provide voice before final release.
+- 4.1: 39/39 reducer tests pass, including new 0–3 key guards, ordered opening round-trips and revisits without secrets. UI RED failed on the absent chest dialog after four keys and a deliberate tap (/private/tmp/gift-stage4-finale-red.log).
+- 4.2: ChestScene, LetterScene and FinaleScene now consume the existing events. All openings save synchronously before presentation, no animationend/timer owns progression. Chest callback reconnected, stable locked-chest art and focus behavior preserved. New transparent artwork inspected and saved in src/assets/scene/; exact prompts recorded in docs/design/stage-4-asset-prompts.md.
+- 4.3: initial component run reported the missing modules (not a behavior assertion); after implementation, jsdom's missing dialog methods required a test-local shim. Corrected unsupported RTL role option caught by typecheck. A meaningful additional RED reproduced an older pending play() pausing a newer request (1 failed / 5 passed); generation check now discards that old completion. Log: /private/tmp/gift-stage4-play-race-red.log.
+- 4.4: local Web Audio paper/unlock/found effects are off on fresh mount; HTML audio is separate and registered with the provider. Voice stops on hidden/pagehide, back and unmount; pending operations cannot resume themselves. Play rejection/media error leave text and retry controls. No production dependencies or real voice file added.
+- Ruling: test browser media failures in an isolated Vite fixture using the real LetterScene and a generated CC0 test tone; keep the ordinary game on the production preview. The fixture and WAV are outside dist, with no runtime override in the game. Cost if wrong: test runs also need local port 4174; acoustic quality still needs a real phone.
+- 4.5: npm run test:unit -> 114/114 (10 files). Targeted mobile finale checks -> 8/8; npm run test:e2e -> 96/96 across WebKit/mobile Chromium/desktop Chromium, including typecheck and production build. Logs: /private/tmp/gift-stage4-unit-green.log, /private/tmp/gift-stage4-audio-e2e.log, /private/tmp/gift-stage4-full-e2e.log. git diff --check passed.
+- Visual inspection: WebKit 440×956 screenshots /private/tmp/gift-stage4-{chest,letter,ending}.png; 400px panels with no horizontal overflow. Letter scrollHeight 1518, viewport panel 922; chest/ending fit. Existing LAN Vite preserved at http://192.168.0.160:5173/gift/. Native browser chrome, physical iPhone/Yandex, VoiceOver and audio quality remain manual.
+- Additional browser check: 320×480 / 200% text screenshots inspected; sound toggle does not overlap dedication, the signature and second-bottom action remain reachable. Real Web Audio toggle and opening actions produced no JavaScript errors. New-file whitespace/EOF and relative Markdown links validated; fixture HTML/WAV are absent from dist.
+- Final review: fresh read-only reviewer found no Critical/Important and one confirmed Minor. It inspected the diff/new files, screenshots and green logs, and reproduced the sound issue with real Web Audio on the production build. No implementation fix pass required.
+- Final: minor (deferred to stage 5): LetterScene schedules paper on opening the second bottom, but its unmount cleanup calls stopVoice/stopEffects and cancels the pending effect. The transition and save work; align transition SFX with leaving-scene cleanup during animation polish without adding reload autoplay.
+- Final: Ruling: secret totals and gift sheet set aside by review — retain the approved stage 5/7 boundary; no fake catalogue or disabled gift action — cost: gift selection is not playable in this checkpoint.
+- Final: Ruling: final letter and real voice set aside by review — keep the explicitly labelled editorial draft and null voiceSrc until owner materials arrive — cost: the game is not ready for personal release yet.
+- Final: Ruling: physical iPhone/Yandex/VoiceOver/acoustic quality set aside by review — browser automation verifies behavior, while device acceptance stays with the owner — cost: no real-device/audio-quality acceptance is claimed.
+- Final: Ruling: visual hover/focus effects set aside by review — preserve the owner's explicit exclusion with functional keyboard navigation/focus restoration — cost: no visual keyboard ring by deliberate owner choice.
+- Stage 4 complete for manual acceptance: 114/114 unit/component and 96/96 E2E plus build/typecheck; no blocking review findings. No branch, commit, push or deployment. Stage 5 has not started.
+
 ## Scope and decisions
 
-- Current checkpoint: stage 2 refinement, four sequential questions in the first pouch. Stages 3–7 remain pending.
+- Current checkpoint: stage 4, chest/letter/audio; stages 1–3 are committed. Stages 5–7 remain pending.
 - Ruling: work in the current checkout, without creating a branch/worktree — the approved plan explicitly selects this checkout and reserves Git operations for a separate request.
 - Ruling: pause after this checkpoint for the owner's manual review — the approved staged workflow takes precedence over the execution skill's continuous-run default.
 - Ruling: keep this durable ledger in docs, without skill scripts that stage/commit Git changes — Git operations require a separate owner request.

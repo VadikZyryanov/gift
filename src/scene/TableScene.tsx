@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { KeyOrnament } from '../components/KeyOrnament';
 import { gameContent } from '../game/content';
 import { pouchIds, type PouchId } from '../game/types';
@@ -9,6 +9,7 @@ interface TableSceneProps {
   onOpenPouch: (pouchId: PouchId) => void;
   onOpenChest?: () => void;
   onOpenMenu?: () => void;
+  soundControl?: ReactNode;
 }
 
 const lockedChestFrames: Keyframe[] = [
@@ -28,7 +29,7 @@ function HeartDivider() {
   );
 }
 
-export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenMenu }: TableSceneProps) {
+export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenMenu, soundControl }: TableSceneProps) {
   const [hasCheckedLock, setHasCheckedLock] = useState(false);
   const chestArtRef = useRef<HTMLSpanElement>(null);
   const shakeAnimationRef = useRef<Animation | null>(null);
@@ -71,9 +72,9 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenM
         </div>
 
         <header className="table-heading">
-          <span className="sound-indicator" role="img" aria-label="Звук выключен">
+          {soundControl ?? <span className="sound-indicator" role="img" aria-label="Звук выключен">
             <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 12h6l8-7v22l-8-7H4v-8Zm20 1 6 6m0-6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </span>
+          </span>}
           <p className="dedication">{gameContent.dedication}</p>
           <HeartDivider />
           <h1 aria-label={gameContent.title}>KitKat<span>в чемодане</span></h1>
@@ -108,7 +109,10 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenM
           <div className="key-row" aria-hidden="true">
             {pouchIds.map((id) => <span key={id} className={`key-ornament${completedPouches.includes(id) ? ' key-ornament--found' : ''}`}><KeyOrnament /></span>)}
           </div>
-          <button className="chest" type="button" aria-label="Сундук" aria-describedby="chest-hint" onClick={handleChestPress}>
+          <button id="treasure-chest" className="chest" type="button" aria-label="Сундук" aria-describedby="chest-hint" onClick={event => {
+            event.currentTarget.focus({ preventScroll: true });
+            handleChestPress();
+          }}>
             <span className="chest__art" ref={chestArtRef}>
               <img src={sceneImages.chest} alt="" width="840" height="560" draggable="false" />
             </span>

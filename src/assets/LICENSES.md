@@ -90,3 +90,14 @@ Cyrillic-ext и Latin-ext для русского текста и обычной
 - `content/family-keepsakes.webp` — семейный натюрморт с сердечком на пелёнке.
 - [Точные prompts](../../docs/design/stage-3-asset-prompts.md).
 - [Ожидаемые личные материалы](../../docs/content/personal-materials.md).
+
+## Финал и звуковые эффекты — этап 4
+
+- `scene/chest-open.webp` — открытое состояние существующего сундука.
+- `scene/envelope.webp` — нарисованный конверт, без запечённого текста.
+- Оба созданы встроенным `image_gen.imagegen`, прозрачность сохранена в WebP.
+  [Точные prompts и источники](../../docs/design/stage-4-asset-prompts.md).
+- Короткие эффекты синтезируются локально через Web Audio, внешних семплов нет.
+- Тестовый `e2e/fixtures/voice-tone.wav` — синтетический тон CC0-1.0,
+  [описание](../../e2e/fixtures/LICENSE.md). Не входит в production-сборку.
+- Настоящее личное голосовое ещё не предоставлено; `voiceSrc` остаётся `null`.

@@ -1,12 +1,34 @@
 import { describe, expect, it } from 'vitest';
 import { canOpenChest, createInitialProgress, gameReducer, getKeyCount } from './progress';
 import { pouchIds, type GameEvent, type PouchId } from './types';
+import { readProgress, writeProgress } from './storage';
 
 function permutations(ids: readonly PouchId[]): PouchId[][] {
   return ids.length === 0 ? [[]] : ids.flatMap(id => permutations(ids.filter(other => other !== id)).map(rest => [id, ...rest]));
 }
 
 describe('game progress', () => {
+  it.each([0, 1, 2, 3])('keeps the chest locked with %i keys', count => {
+    let progress = createInitialProgress(2);
+    for (const pouchId of pouchIds.slice(0, count)) progress = gameReducer(progress, { type: 'complete-pouch', pouchId });
+    expect(gameReducer(progress, { type: 'open-chest' }).chestOpened).toBe(false);
+  });
+
+  it('persists each opening before any animation and allows revisiting with no secrets', () => {
+    let progress = { ...createInitialProgress(2), completedPouches: [...pouchIds] };
+    expect(progress.chestOpened).toBe(false);
+    for (const [type, kind] of [['open-chest', 'chest'], ['open-letter', 'letter'], ['open-second-bottom', 'finale']] as const) {
+      progress = gameReducer(progress, { type });
+      writeProgress(localStorage, progress);
+      progress = readProgress(localStorage, 2).progress;
+      expect(progress.scene.kind).toBe(kind);
+      expect(progress.foundSecrets).toEqual([]);
+    }
+    progress = gameReducer(progress, { type: 'navigate', scene: { kind: 'table' } });
+    progress = gameReducer(progress, { type: 'open-chest' });
+    expect(progress.letterOpened && progress.secondBottomOpened).toBe(true);
+    expect(gameReducer(progress, { type: 'open-letter' }).scene.kind).toBe('letter');
+  });
   it.each(permutations(pouchIds))('collects exactly four keys in order %j', (...order) => {
     let progress = createInitialProgress(2);
     for (const pouchId of order) {
