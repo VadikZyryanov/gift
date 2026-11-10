@@ -2,7 +2,7 @@
 
 ## Scope and decisions
 
-- Current checkpoint: stage 1, illustrated scene and close-up navigation. Stages 2–7 remain pending.
+- Current checkpoint: stage 2 refinement, four sequential questions in the first pouch. Stages 3–7 remain pending.
 - Ruling: work in the current checkout, without creating a branch/worktree — the approved plan explicitly selects this checkout and reserves Git operations for a separate request.
 - Ruling: pause after this checkpoint for the owner's manual review — the approved staged workflow takes precedence over the execution skill's continuous-run default.
 - Ruling: keep this durable ledger in docs, without skill scripts that stage/commit Git changes — Git operations require a separate owner request.
@@ -65,3 +65,37 @@
 - RED: persistent-image unit assertion failed; WebKit regression tests failed on image identity and root color mismatch. GREEN: `npm run test:unit` 10/10; `npm run test:e2e` 48/48 across all three projects with typecheck/build. Independent review found no confirmed defects.
 - Rechecked the dev page at 430×932: same image after three presses, one animation, root/body colors equal, no horizontal overflow. Screenshot inspected. Physical compositor flicker and native chrome appearance remain awaiting owner confirmation.
 - New dependencies/assets, commit, push and deploy: none. Stage 2 remains pending.
+
+## Stage 2 — first task and persistence
+
+- Owner accepted the previous result and explicitly requested the next checkpoint. Stage 1 is accepted for continuation; this does not establish any additional physical-device checks.
+- Implemented the shared progress/events/session contracts, a pure reducer and one GameProvider. Keys are derived from completed pouch IDs. Consecutive synchronous events use the latest ref; each result is written before React renders rewards.
+- Storage validates schema/content revision, known IDs, quiz answers, task kind, flags and scene prerequisites. Repeated IDs are deduplicated. Invalid snapshots recover to a clean start; denied reads/writes/getters keep the game usable in memory with a short notice.
+- Only the beginning quiz is defined in this revision; drafts for unimplemented tasks are rejected until stage 3 defines their valid IDs and mechanics. Other pouches remain previews. Future scene/flag contracts are validated now, while the corresponding UI remains scheduled for stage 4.
+- First question uses the confirmed song title, with source content marked draft. A correct answer saves completion before a brief pouch/key animation. Reload/revisit shows the stable reward; animation is not persisted or required to grant a key.
+- Restart is inside a separate menu, with cancel/confirm. Menu visibility is transient; confirming immediately saves a clean table. Restoring a pouch after reload has a concrete table-button focus target.
+- RED: reducer/storage and quiz/provider tests failed because the corresponding modules were absent. The first WebKit integration test failed on the absent quiz radio before scene integration. Read/write-error tests caught a prematurely cleared unavailable status; it now remains truthful for that session.
+- Final GREEN: `npm run test:unit` 49/49; `npm run test:e2e` 63/63 across mobile-webkit, mobile-chromium and desktop-chromium, including typecheck/build. `git diff --check` passed.
+- Independent review found one Important defect: storage notices outside a modal became inert and invisible while playing; the menu also promised saving unconditionally. RED: the WebKit assertion for a notice inside the active dialog failed. Fixed with a shared StorageNotice placed in the active scene, a live region and status-aware menu copy. GREEN: the whole unit/E2E suite above; E2E checks the warning in the question, reward, table and menu.
+- Visual check: inspected WebKit screenshots of the quiz, reward and restart at 440×956. Corrected the cascade order of the compact pouch-art override so the task illustration uses its intended size. No image replacement or new assets needed.
+- Final: minor (deferred): confirm reward announcement with physical VoiceOver in stage 6; mounting a live region with its text may not announce consistently. WebKit runtime keeps activeElement on the dialog after the form disappears; navigation remains available. This is not a claim of VoiceOver acceptance.
+- Review scope follows the staged plan: other task mechanics (3), chest/letter/audio and media errors (4/6), secrets (5), real content/device/native chrome (6), gifts (7) remain intentionally pending. Cost of these boundaries: this checkpoint offers one obtainable key, not a complete playable finale.
+- Stage 2: technical implementation complete, awaiting the owner's manual review using docs/testing/manual-checks.md. Stage 3 not started.
+- No production dependencies, generated assets, Git operations or publication added. Stage 3 will start only after the owner's manual checkpoint.
+
+## Stage 2 refinement — four memories
+
+- Owner accepted the sequential four-question proposal and supplied the order/answers: beach; first flowers 28 March 2024; first date 16 February 2025; KitKat fourth. The short design is recorded in the existing spec and task 2.6 in the existing plan.
+- Ruling: store questionId, selectedId and confirmed, derive the question position from the ordered content — no duplicated key counter or answer-history engine is needed. Confirmed feedback survives reload before Next. Cost: no answer-history review UI, which was not requested.
+- Ruling: contentRevision becomes 2, using the existing incompatible-save recovery for the old single question — its previous key cannot count as completing four questions. Cost: old development progress starts again with the visible recovery notice.
+- The optional bouquet photo has not been supplied; no substitute personal photo or event is invented. Wrong options, hints and success copy remain editorial drafts. No dependency, branch or commit is needed.
+
+- RED: new component/storage tests failed against the single-question implementation (10 failed / 21 passed); questions/progress were absent and the parser discarded or ignored new draft fields. Log: /private/tmp/gift-four-questions-red.log.
+- GREEN: typed nonempty questions, confirmed current-question draft, strict per-question validation, revision 2, feedback/Next and legend focus implemented; 56/56 unit/component and 66/66 E2E passed before review.
+- Final review: fresh read-only reviewer found one Important, no further Critical/Important/Minor: saving final confirmed draft before completion could leave an unusable Next after a partial storage failure.
+- Final: fixed final-save dead end — two tests (failed completion write + remount/retry; existing final-confirmed draft completion) observed 2 RED / 3 GREEN before the fix, then 58/58 unit/component passed. Final answer now calls only onSolved, so reward uses one save; existing confirmed final states can also finish. Logs: /private/tmp/gift-four-questions-review-red.log and /private/tmp/gift-four-questions-final-unit.log.
+- A test callback required an explicit this: Storage annotation; typecheck caught it and it was corrected before the final build. No any or suppressions added.
+- Final verification: npm run test:e2e → 66/66, including typecheck and production build, WebKit/mobile Chromium/desktop Chromium. Log: /private/tmp/gift-four-questions-final-e2e.log. The existing stage1 feedback/animation/background checks remain green.
+- Visual inspection: /private/tmp/gift-four-questions-first.png and /private/tmp/gift-four-questions-flowers.png, WebKit 440×956, 400px dialog, all controls fit/reachable. Original localhost Vite processes were preserved; no server or browser from this refinement remains running.
+- Final review boundaries: real iPhone/native chrome/VoiceOver are still manual stage6 acceptance; automatic 320px/200%/reduced-motion checks pass. Draft editorial copy is for the owner's review, and stages3–7 remain pending. Cost: no claim of physical-device acceptance or a complete game.
+- Stage 2 refinement: technically complete, waiting for the owner's phone review. No production dependencies, commit, push, branch or deployment added.

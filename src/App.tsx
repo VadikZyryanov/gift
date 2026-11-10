@@ -1,16 +1,30 @@
 import { useState } from 'react';
-import type { PouchId } from './game/types';
+import { GameMenu } from './components/GameMenu';
+import { StorageNotice } from './components/StorageNotice';
+import { GameProvider, useGame } from './game/GameProvider';
 import { PouchScene } from './scene/PouchScene';
 import { TableScene } from './scene/TableScene';
 import './scene/scene.css';
 
-export default function App() {
-  const [selectedPouch, setSelectedPouch] = useState<PouchId | null>(null);
+function Game() {
+  const { progress, send } = useGame();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <>
-      <TableScene completedPouches={[]} onOpenPouch={setSelectedPouch} onOpenChest={() => {}} />
-      {selectedPouch && <PouchScene pouchId={selectedPouch} onBack={() => setSelectedPouch(null)} />}
+      {progress.scene.kind !== 'pouch' && !menuOpen && <StorageNotice />}
+      <TableScene
+        completedPouches={progress.completedPouches}
+        onOpenPouch={pouchId => send({ type: 'navigate', scene: { kind: 'pouch', pouchId } })}
+        onOpenChest={() => send({ type: 'open-chest' })}
+        onOpenMenu={() => setMenuOpen(true)}
+      />
+      {progress.scene.kind === 'pouch' && <PouchScene key={progress.scene.pouchId} pouchId={progress.scene.pouchId} />}
+      {menuOpen && <GameMenu onClose={() => setMenuOpen(false)} />}
     </>
   );
+}
+
+export default function App() {
+  return <GameProvider><Game /></GameProvider>;
 }

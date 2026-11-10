@@ -4,16 +4,18 @@ interface ScenePanelProps {
   title: string;
   onBack: () => void;
   children: ReactNode;
+  backLabel?: string;
+  returnFocusId?: string;
 }
 
-export function ScenePanel({ title, onBack, children }: ScenePanelProps) {
+export function ScenePanel({ title, onBack, children, backLabel = 'На стол', returnFocusId }: ScenePanelProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    const returnFocus = document.activeElement;
+    const returnFocus = (returnFocusId ? document.getElementById(returnFocusId) : null) ?? document.activeElement;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     dialog.showModal();
@@ -25,14 +27,14 @@ export function ScenePanel({ title, onBack, children }: ScenePanelProps) {
         returnFocus.focus({ preventScroll: true });
       }
     };
-  }, []);
+  }, [returnFocusId]);
 
   return (
     <dialog ref={dialogRef} className="scene-panel" aria-labelledby={titleId} onCancel={(event) => { event.preventDefault(); onBack(); }}>
       <div className="scene-panel__top">
         <button className="back-button" type="button" onClick={onBack}>
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          На стол
+          {backLabel}
         </button>
         <span className="scene-panel__little-heart" aria-hidden="true">♡</span>
       </div>

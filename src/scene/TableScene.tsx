@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { KeyOrnament } from '../components/KeyOrnament';
 import { gameContent } from '../game/content';
 import { pouchIds, type PouchId } from '../game/types';
 import { pouchImages, sceneImages } from './assets';
@@ -7,6 +8,7 @@ interface TableSceneProps {
   completedPouches: readonly PouchId[];
   onOpenPouch: (pouchId: PouchId) => void;
   onOpenChest: () => void;
+  onOpenMenu?: () => void;
 }
 
 const lockedChestFrames: Keyframe[] = [
@@ -18,14 +20,6 @@ const lockedChestFrames: Keyframe[] = [
   { transform: 'translateX(0) rotate(0)' },
 ];
 
-function KeyOrnament() {
-  return (
-    <svg viewBox="0 0 32 56" fill="none" aria-hidden="true">
-      <path d="M16 24v28m0-10h7m-7 6h5M16 5c-6-5-11 0-9 5-9-1-9 11 0 11 2 6 8 6 9 1 2 5 8 5 10-1 9 0 9-12 0-11 2-5-4-10-10-5Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function HeartDivider() {
   return (
     <svg className="heart-divider" viewBox="0 0 200 23" fill="none" aria-hidden="true">
@@ -34,7 +28,7 @@ function HeartDivider() {
   );
 }
 
-export function TableScene({ completedPouches, onOpenPouch, onOpenChest }: TableSceneProps) {
+export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenMenu }: TableSceneProps) {
   const [hasCheckedLock, setHasCheckedLock] = useState(false);
   const chestArtRef = useRef<HTMLSpanElement>(null);
   const shakeAnimationRef = useRef<Animation | null>(null);
@@ -90,6 +84,7 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest }: Table
           {pouchIds.map((id) => (
             <div className="pouch-slot" key={id}>
               <button
+                id={`pouch-${id}`}
                 className={`pouch pouch--${id}`}
                 type="button"
                 onClick={(event) => {
@@ -121,7 +116,13 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest }: Table
           <p id="chest-hint" className="chest-hint" role="status" aria-atomic="true">{chestHint}</p>
         </section>
 
-        <footer className="table-footer"><p>{gameContent.signature}</p><HeartDivider /></footer>
+        <footer className="table-footer">
+          <p>{gameContent.signature}</p><HeartDivider />
+          {onOpenMenu && <button className="game-menu-button" type="button" aria-haspopup="dialog" onClick={(event) => {
+            event.currentTarget.focus({ preventScroll: true });
+            onOpenMenu();
+          }}>Меню игры</button>}
+        </footer>
       </div>
     </main>
   );
