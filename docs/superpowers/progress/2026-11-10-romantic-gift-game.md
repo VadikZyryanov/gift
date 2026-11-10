@@ -42,3 +42,26 @@
 - Awaiting the owner's iPhone 17 Pro Max / Yandex Browser review using `docs/testing/manual-checks.md`.
 - Stage 2 not started: no progress persistence, active puzzles, key rewards, hidden secrets or audio yet.
 - Suggested branch: `feature/romantic-gift-game`; suggested commit: `feat: add illustrated mobile game scene`.
+
+## Stage 1 — owner's feedback corrections
+
+- User supplied iPhone screenshots and requested continuous page background, removal of hover/focus effects, and a visible response when pressing a locked chest. Additional decoration stays in the polish stage.
+- Changed mobile canvas from a flat root color plus isolated scene texture to body-owned texture with a transparent root and scene wrappers. Desktop framed composition preserved; theme-color fallback matches the texture base.
+- Removed hover/press highlights and visual focus rings as explicitly requested. Existing focus restoration and Enter/Escape navigation are retained and still covered by E2E.
+- Chest press now checks the lock: closed state replays a short image-only shake and updates an accessible status hint with the remaining key count. Open callback is still guarded by all four keys. Reduced motion keeps the hint without shaking; repeated presses do not grant progress.
+- RED: new unit assertions failed on missing status response; 8 regression E2E checks on the old implementation failed on disabled chest, hover/focus effects and flat root canvas.
+- GREEN: `npm run test:unit` — 9/9; `npm run test:e2e` — 45/45 across all three projects, including typecheck/build. `git diff --check` passed. Independent read-only review found no remaining issues.
+- Inspected updated mobile WebKit screenshots. Native iOS toolbar/status-area appearance still requires the owner's device recheck; desktop emulation does not render browser chrome. Updated manual checklist records this limit.
+- Background rationale: [WebKit safe areas](https://webkit.org/blog/7929/designing-websites-for-iphone-x/), [W3C body background propagation](https://www.w3.org/TR/css-backgrounds-3/#special-backgrounds).
+- No new dependencies, assets, commit, push or deploy for these corrections. Stage 2 remains pending manual acceptance.
+
+## Stage 1 — Safari / Yandex retry
+
+- Owner confirmed pale top/bottom areas remain and only the chest flickers in both mobile Safari and Yandex.
+- Root-cause evidence: a MutationObserver saw IMG removal/addition on every lock press; original image became disconnected while body/table heights stayed unchanged at 430×932. The numeric React key introduced this remount.
+- Replaced remounts with a stable IMG inside a persistent wrapper. Web Animations animates only wrapper transforms, cancels the previous run before replay and on unmount, and skips movement for reduced motion. Repeated presses only set an already-true hint flag, avoiding unnecessary scene renders.
+- Root/body canvas fallback and meta theme-color now agree on #e6bfd7; an 88px edge gradient blends the texture into this solid color. The prior body-only texture propagation did not fix the owner's native browser areas and is not considered sufficient.
+- Rationale: [WebKit documentBackgroundColor source](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/page/LocalFrameView.cpp) excludes images from the document color, while [WebKit #301756 comment 2](https://bugs.webkit.org/show_bug.cgi?id=301756#c2) describes solid extension for viewport edges. Current upstream code informs the fix but does not prove behavior of the owner's unknown installed iOS version. No fake fixed strips or speculative GPU CSS hacks added.
+- RED: persistent-image unit assertion failed; WebKit regression tests failed on image identity and root color mismatch. GREEN: `npm run test:unit` 10/10; `npm run test:e2e` 48/48 across all three projects with typecheck/build. Independent review found no confirmed defects.
+- Rechecked the dev page at 430×932: same image after three presses, one animation, root/body colors equal, no horizontal overflow. Screenshot inspected. Physical compositor flicker and native chrome appearance remain awaiting owner confirmation.
+- New dependencies/assets, commit, push and deploy: none. Stage 2 remains pending.

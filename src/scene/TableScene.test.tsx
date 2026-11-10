@@ -37,16 +37,53 @@ describe('TableScene', () => {
     expect(screen.queryByText(/секрет[а-я]*\s*:/i)).not.toBeInTheDocument();
   });
 
-  it('explains why the chest is locked and does not open it', async () => {
+  it('responds to a locked chest press without opening it', async () => {
     const user = userEvent.setup();
     const onOpenChest = vi.fn();
     render(<TableScene completedPouches={[]} onOpenPouch={vi.fn()} onOpenChest={onOpenChest} />);
     const chest = screen.getByRole('button', { name: /Сундук/i });
 
-    expect(chest.matches(':disabled') || chest.getAttribute('aria-disabled') === 'true').toBe(true);
+    expect(chest).toBeEnabled();
     expect(chest).toHaveAccessibleDescription(/(?:четыр|4).*ключ|ключ.*(?:четыр|4)/i);
     await user.click(chest);
 
+    expect(screen.getByRole('status')).toHaveTextContent('Пока закрыто. Осталось найти ещё 4 ключа.');
     expect(onOpenChest).not.toHaveBeenCalled();
+    await user.click(chest);
+    expect(screen.getByText(/Ключи:\s*0\s*из\s*4/i)).toBeVisible();
+    expect(onOpenChest).not.toHaveBeenCalled();
+  });
+
+  it('explains how many more keys are needed', async () => {
+    const user = userEvent.setup();
+    render(<TableScene completedPouches={['beginning', 'journey', 'proposal']} onOpenPouch={vi.fn()} onOpenChest={vi.fn()} />);
+
+    await user.click(screen.getByRole('button', { name: 'Сундук' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('Пока закрыто. Осталось найти ещё 1 ключ.');
+  });
+
+  it('keeps the chest image mounted across repeated lock checks', async () => {
+    const user = userEvent.setup();
+    render(<TableScene completedPouches={[]} onOpenPouch={vi.fn()} onOpenChest={vi.fn()} />);
+    const chest = screen.getByRole('button', { name: 'Сундук' });
+    const image = chest.querySelector('img');
+
+    await user.click(chest);
+    expect(chest.querySelector('img')).toBe(image);
+    await user.click(chest);
+    expect(chest.querySelector('img')).toBe(image);
+    expect(image).toBeInTheDocument();
+  });
+
+  it('opens the chest when all four keys are available', async () => {
+    const user = userEvent.setup();
+    const onOpenChest = vi.fn();
+    render(<TableScene completedPouches={['beginning', 'journey', 'proposal', 'family']} onOpenPouch={vi.fn()} onOpenChest={onOpenChest} />);
+
+    await user.click(screen.getByRole('button', { name: 'Сундук' }));
+
+    expect(onOpenChest).toHaveBeenCalledOnce();
+    expect(screen.queryByText(/Пока закрыто/)).not.toBeInTheDocument();
   });
 });

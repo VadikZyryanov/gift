@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { gameContent } from '../game/content';
 import { pouchIds, type PouchId } from '../game/types';
 import { pouchImages, sceneImages } from './assets';
@@ -7,6 +8,15 @@ interface TableSceneProps {
   onOpenPouch: (pouchId: PouchId) => void;
   onOpenChest: () => void;
 }
+
+const lockedChestFrames: Keyframe[] = [
+  { transform: 'translateX(0) rotate(0)' },
+  { transform: 'translateX(-4px) rotate(-1.2deg)' },
+  { transform: 'translateX(4px) rotate(1.2deg)' },
+  { transform: 'translateX(-3px) rotate(-.8deg)' },
+  { transform: 'translateX(2px) rotate(.5deg)' },
+  { transform: 'translateX(0) rotate(0)' },
+];
 
 function KeyOrnament() {
   return (
@@ -25,8 +35,35 @@ function HeartDivider() {
 }
 
 export function TableScene({ completedPouches, onOpenPouch, onOpenChest }: TableSceneProps) {
+  const [hasCheckedLock, setHasCheckedLock] = useState(false);
+  const chestArtRef = useRef<HTMLSpanElement>(null);
+  const shakeAnimationRef = useRef<Animation | null>(null);
   const keyCount = pouchIds.filter((id) => completedPouches.includes(id)).length;
   const chestReady = keyCount === pouchIds.length;
+  const remainingKeys = pouchIds.length - keyCount;
+  const chestHint = chestReady
+    ? 'Все ключи нашлись. Самое тёплое — внутри.'
+    : hasCheckedLock
+      ? `Пока закрыто. Осталось найти ещё ${remainingKeys} ${remainingKeys === 1 ? 'ключ' : 'ключа'}.`
+      : 'Сундук откроется, когда найдутся все 4 ключа.';
+
+  useEffect(() => () => { shakeAnimationRef.current?.cancel(); }, []);
+
+  function handleChestPress() {
+    shakeAnimationRef.current?.cancel();
+    if (chestReady) {
+      onOpenChest();
+      return;
+    }
+
+    setHasCheckedLock(true);
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+    shakeAnimationRef.current = chestArtRef.current?.animate?.(lockedChestFrames, {
+      duration: 500,
+      easing: 'ease-out',
+    }) ?? null;
+  }
 
   return (
     <main className="table-wrap">
@@ -76,10 +113,12 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest }: Table
           <div className="key-row" aria-hidden="true">
             {pouchIds.map((id) => <span key={id} className={`key-ornament${completedPouches.includes(id) ? ' key-ornament--found' : ''}`}><KeyOrnament /></span>)}
           </div>
-          <button className="chest" type="button" aria-label="Сундук" aria-disabled={!chestReady} aria-describedby="chest-hint" onClick={() => { if (chestReady) onOpenChest(); }}>
-            <img src={sceneImages.chest} alt="" width="840" height="560" draggable="false" />
+          <button className="chest" type="button" aria-label="Сундук" aria-describedby="chest-hint" onClick={handleChestPress}>
+            <span className="chest__art" ref={chestArtRef}>
+              <img src={sceneImages.chest} alt="" width="840" height="560" draggable="false" />
+            </span>
           </button>
-          <p id="chest-hint" className="chest-hint">{chestReady ? 'Все ключи нашлись. Самое тёплое — внутри.' : 'Сундук откроется, когда найдутся все 4 ключа.'}</p>
+          <p id="chest-hint" className="chest-hint" role="status" aria-atomic="true">{chestHint}</p>
         </section>
 
         <footer className="table-footer"><p>{gameContent.signature}</p><HeartDivider /></footer>

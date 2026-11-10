@@ -37,7 +37,9 @@
 :root {
   font-family: Literata, Georgia, 'Times New Roman', serif;
   color: #422c48;
-  background: #ead9e5;
+  --page-color: #e6bfd7;
+  background-color: var(--page-color);
+  --scene-background: linear-gradient(var(--page-color), transparent 88px, transparent calc(100% - 88px), var(--page-color)), radial-gradient(ellipse at 50% 21%, #fff0df45, transparent 58%), url('./assets/scene/table-background.webp') center / 100% 100%, var(--page-color);
   --peach: #fff0e6;
   --lavender: #e7d9f5;
   --berry: #9c365c;
@@ -54,20 +56,27 @@
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100svh;
+  background: var(--scene-background);
 }
 
 button {
   font: inherit;
   color: inherit;
+  appearance: none;
+  outline: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
 button:not(:disabled):not([aria-disabled='true']) { cursor: pointer; }
-button:focus-visible { outline: 2px solid var(--berry); outline-offset: 5px; }
 img { max-width: 100%; height: auto; }
 svg { display: block; }
 ::selection { color: var(--plum); background: #eed0d8; }
+
+@media (min-width: 600px) {
+  body { background: #ead9e5; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

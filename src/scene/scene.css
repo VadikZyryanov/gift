@@ -1,7 +1,6 @@
 .table-wrap {
   min-height: 100svh;
   padding: 0 max(0px, env(safe-area-inset-right)) 0 max(0px, env(safe-area-inset-left));
-  background: radial-gradient(ellipse at 50% 35%, #ffefe2 0%, #eddae4 60%, #d7c5e1 100%);
 }
 
 .table {
@@ -13,7 +12,6 @@
   padding: max(24px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
   overflow: clip;
   text-align: center;
-  background: radial-gradient(ellipse at 50% 21%, #fff0df45, transparent 58%), url('../assets/scene/table-background.webp') center / 100% 100%, #f8e1e2;
 }
 
 .table-heading, .pouches, .treasure, .table-footer { position: relative; z-index: 1; }
@@ -94,8 +92,7 @@
   content: '';
 }
 
-.pouch__art img { display: block; width: 100%; aspect-ratio: 1.09; object-fit: contain; transition: filter .25s, scale .25s; }
-.pouch:active .pouch__art img { scale: .96; }
+.pouch__art img { display: block; width: 100%; aspect-ratio: 1.09; object-fit: contain; }
 
 .pouch__tag {
   position: absolute;
@@ -143,6 +140,7 @@
 .key-ornament--found { color: var(--gold); }
 .chest { display: block; width: 72%; max-width: 334px; margin: 4px auto 0; padding: 0; border: 0; border-radius: 24px; background: none; }
 .chest img { display: block; width: 100%; aspect-ratio: 1.65; object-fit: contain; filter: drop-shadow(0 7px 8px #773b5a30); }
+.chest__art { display: block; transform-origin: 50% 90%; }
 .chest-hint { max-width: 350px; margin: 6px auto 0; font-size: clamp(.8125rem, 3.25vw, 1rem); line-height: 1.6; text-wrap: balance; }
 .table-footer { margin-top: 18px; }
 .table-footer p { margin: 0; color: var(--berry); font-family: var(--handwriting); font-size: clamp(1.5rem, 6.4vw, 2rem); line-height: 1.2; }
@@ -211,14 +209,9 @@
   to { opacity: 1; translate: 0 0; }
 }
 
-@media (hover: hover) {
-  .pouch:hover .pouch__art img { filter: brightness(1.05) drop-shadow(0 0 9px #fff2db); scale: 1.025; }
-  .back-button:hover { background: #fff8ed; }
-}
-
 @media (min-width: 600px) {
-  .table-wrap { padding-block: 24px; }
-  .table { min-height: auto; padding: 28px 32px; border: 1px solid #d9bdd5; border-radius: 32px; box-shadow: 0 12px 70px #663f6a1a; }
+  .table-wrap { padding-block: 24px; background: radial-gradient(ellipse at 50% 35%, #ffefe2 0%, #eddae4 60%, #d7c5e1 100%); }
+  .table { min-height: auto; padding: 28px 32px; border: 1px solid #d9bdd5; border-radius: 32px; box-shadow: 0 12px 70px #663f6a1a; background: var(--scene-background); }
   .table-decor__flowers--top { width: 200px; left: -84px; top: -60px; }
   .table-decor__flowers--bottom { width: 210px; right: -93px; }
   .pouch__tag { padding-block: 10px; }
