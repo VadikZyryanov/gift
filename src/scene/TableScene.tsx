@@ -7,7 +7,7 @@ import { pouchImages, sceneImages } from './assets';
 interface TableSceneProps {
   completedPouches: readonly PouchId[];
   onOpenPouch: (pouchId: PouchId) => void;
-  onOpenChest: () => void;
+  onOpenChest?: () => void;
   onOpenMenu?: () => void;
 }
 
@@ -46,7 +46,7 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenM
   function handleChestPress() {
     shakeAnimationRef.current?.cancel();
     if (chestReady) {
-      onOpenChest();
+      onOpenChest?.();
       return;
     }
 

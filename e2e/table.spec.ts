@@ -83,9 +83,9 @@ test('keeps closeups scrollable on a short screen', async ({ page }) => {
   await page.getByRole('button', { name: 'Далеко от дома', exact: true }).click();
   const closeup = page.getByRole('dialog');
   await expect(closeup).toBeVisible();
-  const description = closeup.locator('.pouch-preview__description');
-  await description.scrollIntoViewIfNeeded();
-  await expect(description).toBeInViewport();
+  const checkAnswer = closeup.getByRole('button', { name: 'Проверить ответ', exact: true });
+  await checkAnswer.scrollIntoViewIfNeeded();
+  await expect(checkAnswer).toBeInViewport();
   await closeup.getByRole('button', { name: 'На стол', exact: true }).click();
   await expect(closeup).toHaveCount(0);
 });

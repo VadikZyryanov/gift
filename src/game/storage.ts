@@ -1,6 +1,6 @@
 import { gameContent } from './content';
 import { canOpenChest, createInitialProgress, isSceneAllowed } from './progress';
-import { pouchIds, secretIds, type GameProgress, type GameSession, type PouchId, type Scene, type SecretId } from './types';
+import { pouchIds, secretIds, type GameProgress, type GameSession, type PouchId, type Scene, type SecretId, type TaskDefinition, type TaskDraft } from './types';
 
 const storageKey = 'gift:progress:v1';
 
@@ -25,6 +25,36 @@ function parseScene(value: unknown): Scene | null {
   return null;
 }
 
+function parseDraft(task: TaskDefinition, draft: unknown): TaskDraft | null {
+  if (!isRecord(draft) || draft.kind !== task.kind) return null;
+  switch (task.kind) {
+    case 'quiz': {
+      const question = task.questions.find(item => item.id === draft.questionId);
+      if (!question || typeof draft.confirmed !== 'boolean') return null;
+      const selectedId = draft.selectedId;
+      if (selectedId !== null && !question.options.some(option => option.id === selectedId)) return null;
+      if (draft.confirmed && selectedId !== question.correctId) return null;
+      return { kind: 'quiz', questionId: question.id, selectedId: typeof selectedId === 'string' ? selectedId : null, confirmed: draft.confirmed };
+    }
+    case 'photo': {
+      const selectedId = draft.selectedId;
+      if (selectedId !== null && (typeof selectedId !== 'string' || !task.options.some(option => option.id === selectedId))) return null;
+      return { kind: 'photo', selectedId };
+    }
+    case 'phrase': {
+      const ids: unknown = draft.selectedWordIds;
+      if (!Array.isArray(ids) || !ids.every((id: unknown): id is string => typeof id === 'string' && task.words.some(word => word.id === id))) return null;
+      if (new Set(ids).size !== ids.length) return null;
+      return { kind: 'phrase', selectedWordIds: [...ids] };
+    }
+    case 'detail': {
+      const ids: unknown = draft.inspectedIds;
+      if (!Array.isArray(ids) || !ids.every((id: unknown): id is string => typeof id === 'string' && task.spots.some(spot => spot.id === id))) return null;
+      return { kind: 'detail', inspectedIds: [...new Set(ids)] };
+    }
+  }
+}
+
 function parseProgress(value: unknown, contentRevision: number): GameProgress | null {
   if (!isRecord(value) || value.schemaVersion !== 1 || value.contentRevision !== contentRevision) return null;
   if (!Array.isArray(value.completedPouches) || !value.completedPouches.every(isPouchId)) return null;
@@ -34,14 +64,10 @@ function parseProgress(value: unknown, contentRevision: number): GameProgress | 
   if (!scene || !isRecord(value.drafts)) return null;
   const drafts: GameProgress['drafts'] = {};
   for (const [id, draft] of Object.entries(value.drafts)) {
-    // Other tasks have no definitions yet; their drafts become valid in stage 3.
-    if (id !== 'beginning' || !isRecord(draft) || draft.kind !== 'quiz') return null;
-    const question = gameContent.beginning.task.questions.find(item => item.id === draft.questionId);
-    if (!question || typeof draft.confirmed !== 'boolean') return null;
-    const selectedId = draft.selectedId;
-    if (selectedId !== null && !question.options.some(option => option.id === selectedId)) return null;
-    if (draft.confirmed && selectedId !== question.correctId) return null;
-    drafts.beginning = { kind: 'quiz', questionId: question.id, selectedId: typeof selectedId === 'string' ? selectedId : null, confirmed: draft.confirmed };
+    if (!isPouchId(id)) return null;
+    const parsed = parseDraft(gameContent.pouches[id].task, draft);
+    if (!parsed) return null;
+    drafts[id] = parsed;
   }
   const progress: GameProgress = {
     schemaVersion: 1, contentRevision,

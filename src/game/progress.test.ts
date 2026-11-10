@@ -1,8 +1,23 @@
 import { describe, expect, it } from 'vitest';
 import { canOpenChest, createInitialProgress, gameReducer, getKeyCount } from './progress';
-import { pouchIds, type GameEvent } from './types';
+import { pouchIds, type GameEvent, type PouchId } from './types';
+
+function permutations(ids: readonly PouchId[]): PouchId[][] {
+  return ids.length === 0 ? [[]] : ids.flatMap(id => permutations(ids.filter(other => other !== id)).map(rest => [id, ...rest]));
+}
 
 describe('game progress', () => {
+  it.each(permutations(pouchIds))('collects exactly four keys in order %j', (...order) => {
+    let progress = createInitialProgress(2);
+    for (const pouchId of order) {
+      progress = gameReducer(progress, { type: 'complete-pouch', pouchId });
+      progress = gameReducer(progress, { type: 'complete-pouch', pouchId });
+    }
+    expect(new Set(progress.completedPouches).size).toBe(4);
+    expect(getKeyCount(progress)).toBe(4);
+    expect(canOpenChest(progress)).toBe(true);
+  });
+
   it('awards one key per pouch despite repeated completion', () => {
     const initial = createInitialProgress(1);
     const solved = gameReducer(initial, { type: 'complete-pouch', pouchId: 'beginning' });

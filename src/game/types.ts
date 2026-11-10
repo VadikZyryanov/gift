@@ -17,11 +17,14 @@ export type Scene =
   | { kind: 'chest' | 'letter' | 'finale' };
 
 export type QuizDraft = { kind: 'quiz'; questionId: string; selectedId: string | null; confirmed: boolean };
+export type PhotoDraft = { kind: 'photo'; selectedId: string | null };
+export type PhraseDraft = { kind: 'phrase'; selectedWordIds: string[] };
+export type DetailDraft = { kind: 'detail'; inspectedIds: string[] };
 export type TaskDraft =
   | QuizDraft
-  | { kind: 'photo'; selectedId: string | null }
-  | { kind: 'phrase'; selectedWordIds: string[] }
-  | { kind: 'detail'; inspectedIds: string[] };
+  | PhotoDraft
+  | PhraseDraft
+  | DetailDraft;
 
 export interface QuizQuestion {
   id: string;
@@ -35,6 +38,53 @@ export interface QuizQuestion {
 export interface QuizTaskDefinition {
   kind: 'quiz';
   questions: readonly [QuizQuestion, ...QuizQuestion[]];
+}
+
+export interface TaskImageSource {
+  src: string;
+  alt: string;
+}
+
+export interface PhotoTaskDefinition {
+  kind: 'photo';
+  question: string;
+  caption: string;
+  options: readonly { id: string; label: string; image: TaskImageSource }[];
+  correctId: string;
+  hint: string;
+}
+
+export interface PhraseTaskDefinition {
+  kind: 'phrase';
+  question: string;
+  caption: string;
+  words: readonly { id: string; label: string }[];
+  answerIds: readonly string[];
+  hint: string;
+}
+
+export interface DetailTaskDefinition {
+  kind: 'detail';
+  question: string;
+  caption: string;
+  image: TaskImageSource;
+  spots: readonly {
+    id: string;
+    label: string;
+    // Percentages of the uncropped illustration, independent of screen size.
+    x: number;
+    y: number;
+  }[];
+  targetId: string;
+  hint: string;
+}
+
+export type TaskDefinition = QuizTaskDefinition | PhotoTaskDefinition | PhraseTaskDefinition | DetailTaskDefinition;
+
+export interface PouchContent extends PouchPreview {
+  status: 'draft' | 'ready';
+  task: TaskDefinition;
+  rewardNote: string;
 }
 
 export interface GameProgress {

@@ -17,6 +17,34 @@
 .story-button { display: block; width: 100%; min-height: 48px; margin-top: 22px; padding: 13px 18px; border: 1px solid #8d3153; border-radius: 999px; background: #9c365c; color: #fff5ec; font-size: .9375rem; line-height: 1.5; overflow-wrap: anywhere; }
 .story-button:disabled { border-color: #c5a5b5; background: #d9bcc9; color: #624354; }
 .story-button--quiet { border-color: #c6a0b4; background: #fff1e9b3; color: var(--plum); }
+.task-question { margin: 0; font-size: 1.125rem; font-weight: 600; line-height: 1.65; text-align: center; overflow-wrap: anywhere; }
+.task-image { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.task-image--missing { display: grid; min-height: 80px; place-items: center; margin: 0; padding: 12px; background: #ead8e4; color: #70435c; font-size: .75rem; line-height: 1.6; text-align: center; overflow-wrap: anywhere; }
+.photo-task__choices { display: grid; gap: 12px; }
+.photo-choice { position: relative; display: grid; grid-template-columns: 20px minmax(0, 1fr) minmax(0, .9fr); align-items: center; gap: 12px; min-height: 88px; padding: 8px 12px; border: 1px solid #d6b4c1; border-radius: 12px 4px 12px 4px; background: #fff5e9; box-shadow: 0 4px 10px #713f6410; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.photo-choice--selected { border-color: var(--berry); background: #f8dfdf; }
+.photo-choice input { width: 20px; height: 20px; margin: 0; border: 1.5px solid #b3839b; border-radius: 50%; appearance: none; outline: none; }
+.photo-choice input:checked { border: 6px solid var(--berry); }
+.photo-choice .task-image { border-radius: 4px; }
+.photo-choice__label { font-size: .875rem; line-height: 1.6; overflow-wrap: anywhere; }
+.photo-choice__label > span { display: block; color: var(--berry); font-family: var(--handwriting); font-size: 1.5rem; line-height: 1.2; }
+.phrase-task__paper { min-height: 112px; padding: 16px 12px 8px; border: 1px solid #dfc2ae; border-radius: 4px 16px 4px 16px; background: #fff2df; box-shadow: 0 4px 16px #713f6410; text-align: center; }
+.phrase-task__line { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.phrase-task__line li { min-width: 0; max-width: 100%; }
+.phrase-task__placeholder { margin: 0; padding: 8px; color: #986c7d; font-family: var(--handwriting); font-size: 1.375rem; line-height: 1.4; overflow-wrap: anywhere; }
+.phrase-task__words { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 24px; }
+.phrase-word { min-width: 48px; max-width: 100%; min-height: 48px; padding: 8px 16px; border: 1px solid #ba93ac; border-radius: 12px 4px 12px 4px; background: #eddfed; color: #693957; font-size: 1rem; line-height: 1.5; overflow-wrap: anywhere; }
+.phrase-word--chosen { border-color: #d4ae94; background: #ffead2; color: #77334c; }
+.phrase-word:disabled { border-style: dashed; border-color: #d7c2ce; background: #e8dfe7; color: #947c8e; }
+.phrase-task__clear { min-height: 44px; margin-top: 8px; padding: 8px 12px; border: 0; background: none; color: #875670; font-size: .75rem; line-height: 1.6; overflow-wrap: anywhere; }
+.phrase-task__clear:disabled { color: #aa8b9a; }
+.detail-task__picture { position: relative; overflow: hidden; border: 4px solid #fff2e1; border-radius: 12px; box-shadow: 0 4px 16px #713f6420; }
+.detail-task__spots { position: absolute; inset: 0; }
+.detail-spot { position: absolute; display: grid; width: clamp(48px, 22%, 80px); height: 64px; place-items: end; padding: 4px; border: 1px solid #fff6e485; border-radius: 45%; background: #fff4e018; transform: translate(-50%, -50%); }
+.detail-spot > span { display: grid; width: 18px; height: 18px; place-items: center; border-radius: 50%; background: #fff5e5e0; color: #70405a; font-size: 11px; }
+.detail-spot[aria-pressed='true'] { border-color: #9c365c88; background: #9c365c18; }
+.detail-task__picture--missing .detail-task__spots { position: static; display: grid; gap: 8px; padding: 12px; background: #fff2e1; }
+.detail-task__picture--missing .detail-spot { position: static; display: block; width: 100%; height: auto; min-height: 48px; padding: 12px; border: 1px solid #d6b4c1; border-radius: 12px; background: #fff5e9; font-size: .875rem; line-height: 1.7; transform: none; overflow-wrap: anywhere; }
 .pouch-reward { max-width: 340px; margin: 20px auto 0; }
 .pouch-reward__key { display: block; width: 50px; height: 76px; margin: 0 auto 12px; color: #a47834; }
 .pouch-reward__key svg { width: 100%; height: 100%; }

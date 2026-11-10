@@ -16,7 +16,6 @@ function Game() {
       <TableScene
         completedPouches={progress.completedPouches}
         onOpenPouch={pouchId => send({ type: 'navigate', scene: { kind: 'pouch', pouchId } })}
-        onOpenChest={() => send({ type: 'open-chest' })}
         onOpenMenu={() => setMenuOpen(true)}
       />
       {progress.scene.kind === 'pouch' && <PouchScene key={progress.scene.pouchId} pouchId={progress.scene.pouchId} />}

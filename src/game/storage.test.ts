@@ -17,6 +17,41 @@ const saved: GameProgress = {
 beforeEach(() => { localStorage.clear(); vi.restoreAllMocks(); });
 
 describe('progress storage', () => {
+  it('restores every task kind together without losing the existing quiz', () => {
+    const progress: GameProgress = {
+      ...createInitialProgress(revision),
+      completedPouches: ['beginning'],
+      drafts: {
+        beginning: quizDraft,
+        journey: { kind: 'photo', selectedId: 'turkey' },
+        proposal: { kind: 'phrase', selectedWordIds: ['with', 'you'] },
+        family: { kind: 'detail', inspectedIds: ['flowers', 'rings'] },
+      },
+      scene: { kind: 'pouch', pouchId: 'proposal' },
+    };
+    writeProgress(localStorage, progress);
+    expect(readProgress(localStorage, revision)).toEqual({ progress, status: 'available' });
+  });
+
+  it.each([
+    { journey: { kind: 'photo', selectedId: 'unknown' } },
+    { journey: { kind: 'photo' } },
+    { proposal: { kind: 'phrase', selectedWordIds: ['unknown'] } },
+    { proposal: { kind: 'phrase', selectedWordIds: ['with', 'with'] } },
+    { proposal: { kind: 'phrase', selectedWordIds: 'with' } },
+    { family: { kind: 'detail', inspectedIds: ['unknown'] } },
+    { family: { kind: 'detail', inspectedIds: [1] } },
+    { family: { kind: 'photo', selectedId: null } },
+  ])('rejects invalid drafts for the added tasks: %j', (drafts) => {
+    localStorage.setItem(key, JSON.stringify({ ...saved, drafts }));
+    expect(readProgress(localStorage, revision).status).toBe('recovered');
+  });
+
+  it('deduplicates inspected details without changing their order', () => {
+    localStorage.setItem(key, JSON.stringify({ ...saved, drafts: { family: { kind: 'detail', inspectedIds: ['rings', 'flowers', 'rings'] } } }));
+    expect(readProgress(localStorage, revision).progress.drafts.family).toEqual({ kind: 'detail', inspectedIds: ['rings', 'flowers'] });
+  });
+
   it('round-trips all fields and starts normally without a save', () => {
     expect(readProgress(localStorage, revision).status).toBe('available');
     expect(writeProgress(localStorage, saved)).toBe(true);

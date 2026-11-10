@@ -79,3 +79,14 @@ Cyrillic-ext и Latin-ext для русского текста и обычной
 - [Утверждённый макет](../../docs/design/assets/main-scene-approved.png).
 
 Сторонние предметные фотографии и платные stock-ресурсы не использованы.
+
+## Иллюстрации заданий — этап 3
+
+Четыре отдельных изображения созданы встроенным `image_gen.imagegen` 10 ноября
+2026 года, затем уменьшены до 800×600 и преобразованы в WebP через `cwebp -q 82`.
+Это нарисованные черновики, не фотографии поездок и не реальные семейные вещи.
+
+- `content/journey-dubai.webp`, `content/journey-turkey.webp`, `content/journey-egypt.webp` — открытки для задания о первой поездке.
+- `content/family-keepsakes.webp` — семейный натюрморт с сердечком на пелёнке.
+- [Точные prompts](../../docs/design/stage-3-asset-prompts.md).
+- [Ожидаемые личные материалы](../../docs/content/personal-materials.md).
