@@ -1,74 +1,78 @@
+@font-face {
+  font-family: Literata;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./assets/fonts/literata-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: Literata;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./assets/fonts/literata-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: Caveat;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./assets/fonts/caveat-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: Caveat;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./assets/fonts/caveat-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: #20352d;
-  background: #f4f6f1;
+  font-family: Literata, Georgia, 'Times New Roman', serif;
+  color: #422c48;
+  background: #ead9e5;
+  --peach: #fff0e6;
+  --lavender: #e7d9f5;
+  --berry: #9c365c;
+  --plum: #422c48;
+  --gold: #ba8b4b;
+  --handwriting: Caveat, cursive;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
+  margin: 0;
   min-width: 320px;
-  margin: 0;
 }
 
-.page {
-  display: grid;
-  min-height: 100svh;
-  place-items: center;
-  padding: 24px;
+button {
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.card {
-  width: 100%;
-  max-width: 600px;
-  padding: clamp(32px, 7vw, 64px);
-  border: 1px solid #e0e6db;
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 16px 48px #20352d08;
-}
+button:not(:disabled):not([aria-disabled='true']) { cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--berry); outline-offset: 5px; }
+img { max-width: 100%; height: auto; }
+svg { display: block; }
+::selection { color: var(--plum); background: #eed0d8; }
 
-.badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 100px;
-  color: #365b42;
-  background: #edf4e8;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-h1 {
-  margin: 24px 0 16px;
-  font-size: clamp(56px, 12vw, 80px);
-  letter-spacing: -0.06em;
-  line-height: 1;
-}
-
-.description {
-  margin: 0;
-  color: #58665e;
-  font-size: 17px;
-  line-height: 1.7;
-}
-
-.stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 32px;
-}
-
-.stack span {
-  padding: 6px 10px;
-  border: 1px solid #e0e6db;
-  border-radius: 8px;
-  color: #58665e;
-  font-size: 13px;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

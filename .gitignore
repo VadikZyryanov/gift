@@ -6,3 +6,5 @@ dist/
 .idea/
 .vscode/
 npm-debug.log*
+playwright-report/
+test-results/

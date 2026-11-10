@@ -1,0 +1,89 @@
+import { gameContent } from '../game/content';
+import { pouchIds, type PouchId } from '../game/types';
+import { pouchImages, sceneImages } from './assets';
+
+interface TableSceneProps {
+  completedPouches: readonly PouchId[];
+  onOpenPouch: (pouchId: PouchId) => void;
+  onOpenChest: () => void;
+}
+
+function KeyOrnament() {
+  return (
+    <svg viewBox="0 0 32 56" fill="none" aria-hidden="true">
+      <path d="M16 24v28m0-10h7m-7 6h5M16 5c-6-5-11 0-9 5-9-1-9 11 0 11 2 6 8 6 9 1 2 5 8 5 10-1 9 0 9-12 0-11 2-5-4-10-10-5Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function HeartDivider() {
+  return (
+    <svg className="heart-divider" viewBox="0 0 200 23" fill="none" aria-hidden="true">
+      <path d="M7 15c27-10 47-10 75-3m36 0c28-7 48-7 75 3M100 21l-9-10C81-1 99-3 100 6c1-9 19-7 9 5Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function TableScene({ completedPouches, onOpenPouch, onOpenChest }: TableSceneProps) {
+  const keyCount = pouchIds.filter((id) => completedPouches.includes(id)).length;
+  const chestReady = keyCount === pouchIds.length;
+
+  return (
+    <main className="table-wrap">
+      <div className="table">
+        <div className="table-decor" aria-hidden="true">
+          <img className="table-decor__flowers table-decor__flowers--top" src={sceneImages.decor} alt="" width="500" height="500" />
+          <img className="table-decor__flowers table-decor__flowers--bottom" src={sceneImages.decor} alt="" width="500" height="500" />
+          <span className="table-decor__ribbon table-decor__ribbon--left" />
+          <span className="table-decor__ribbon table-decor__ribbon--right" />
+          {Array.from({ length: 9 }, (_, index) => <i key={index} className={`mote mote--${index + 1}`} />)}
+        </div>
+
+        <header className="table-heading">
+          <span className="sound-indicator" role="img" aria-label="Звук выключен">
+            <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 12h6l8-7v22l-8-7H4v-8Zm20 1 6 6m0-6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </span>
+          <p className="dedication">{gameContent.dedication}</p>
+          <HeartDivider />
+          <h1 aria-label={gameContent.title}>KitKat<span>в чемодане</span></h1>
+          <p className="table-instruction">{gameContent.instruction}</p>
+        </header>
+
+        <section className="pouches" aria-label="Четыре маленькие истории">
+          {pouchIds.map((id) => (
+            <div className="pouch-slot" key={id}>
+              <button
+                className={`pouch pouch--${id}`}
+                type="button"
+                onClick={(event) => {
+                  event.currentTarget.focus({ preventScroll: true });
+                  onOpenPouch(id);
+                }}
+                aria-label={gameContent.pouches[id].title}
+                aria-haspopup="dialog"
+              >
+                <span className="pouch__art">
+                  <img src={pouchImages[id]} alt="" width="640" height="600" draggable="false" fetchPriority={id === 'beginning' ? 'high' : 'auto'} />
+                  <span className="pouch__tag">{gameContent.pouches[id].title}</span>
+                </span>
+              </button>
+            </div>
+          ))}
+        </section>
+
+        <section className="treasure" aria-label="Ключи и сундук">
+          <p className="key-count" aria-live="polite">Ключи: {keyCount} из 4</p>
+          <div className="key-row" aria-hidden="true">
+            {pouchIds.map((id) => <span key={id} className={`key-ornament${completedPouches.includes(id) ? ' key-ornament--found' : ''}`}><KeyOrnament /></span>)}
+          </div>
+          <button className="chest" type="button" aria-label="Сундук" aria-disabled={!chestReady} aria-describedby="chest-hint" onClick={() => { if (chestReady) onOpenChest(); }}>
+            <img src={sceneImages.chest} alt="" width="840" height="560" draggable="false" />
+          </button>
+          <p id="chest-hint" className="chest-hint">{chestReady ? 'Все ключи нашлись. Самое тёплое — внутри.' : 'Сундук откроется, когда найдутся все 4 ключа.'}</p>
+        </section>
+
+        <footer className="table-footer"><p>{gameContent.signature}</p><HeartDivider /></footer>
+      </div>
+    </main>
+  );
+}

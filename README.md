@@ -1,6 +1,13 @@
 # Gift
 
-Базовый проект на React, TypeScript и Vite с одной стартовой страницей.
+«KitKat в чемодане» — личная романтическая мини-игра на React, TypeScript и Vite.
+
+Готова техническая часть этапа 1: иллюстрированный стол, четыре сумочки, крупные планы
+и возврат. Ожидается ручная проверка владельцем на iPhone. Задания, сохранение, письмо, аудио и секреты добавляются следующими частями.
+
+- [План реализации](docs/superpowers/plans/2026-11-10-romantic-gift-game-implementation.md).
+- [Концепция и макет](docs/superpowers/specs/2026-11-10-romantic-gift-game-design.md).
+- [Ручная проверка на телефоне](docs/testing/manual-checks.md).
 
 ## Локальная разработка
 
@@ -13,6 +20,15 @@ npm run dev
 
 Открой адрес, который Vite выведет в терминале, обычно `http://localhost:5173/gift/`.
 
+Для проверки на iPhone в той же Wi-Fi-сети:
+
+```bash
+npm run dev -- --host 0.0.0.0
+```
+
+На телефоне открой Network URL из терминала с путём `/gift/`.
+Шрифты и графика локальные; работающая страница не обращается к Google Fonts.
+
 ## Проверка и сборка
 
 ```bash
@@ -23,6 +39,31 @@ npm run preview
 
 `npm run build` проверяет типы и создаёт статические файлы в `dist/`.
 `npm run preview` позволяет посмотреть собранную страницу локально.
+
+## Автоматические тесты
+
+```bash
+npm run test:unit
+npm run test:watch
+```
+
+Перед первым запуском E2E установить браузеры Playwright:
+
+```bash
+npx playwright install chromium webkit
+npm run test:e2e
+```
+
+E2E сначала проверяет типы и собирает приложение, затем запускает production preview
+на `http://127.0.0.1:4173/gift/`. Проекты: `mobile-webkit`, `mobile-chromium`,
+`desktop-chromium`. Для одного проекта:
+
+```bash
+npm run test:e2e -- --project=mobile-webkit
+```
+
+Мобильные параметры браузерных тестов не заменяют проверку настоящего iPhone
+и мобильного Яндекс Браузера. Отчёты и traces находятся в игнорируемом `test-results/`.
 
 ## GitHub Pages
 
@@ -47,7 +88,12 @@ Run workflow**. Публиковать исходный `index.html` из кор
 
 ## Структура
 
-- `src/App.tsx` — стартовая страница.
-- `src/index.css` — стили страницы.
+- `src/App.tsx` — переключение между столом и крупным планом.
+- `src/game/` — идентификаторы и контент игры.
+- `src/scene/` — сцены, иллюстрации предметов и их стили.
+- `src/components/ScenePanel.tsx` — доступная панель осмотра на native dialog.
+- `src/assets/` — локальные WebP, WOFF2 и лицензии.
+- `src/index.css` — шрифты, общие стили и reduced motion.
 - `src/main.tsx` — точка входа React.
 - `vite.config.ts` — настройки Vite и базовый путь для GitHub Pages.
+- `e2e/` — браузерные пользовательские сценарии, `src/**/*.test.tsx` — component tests.
