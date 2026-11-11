@@ -82,11 +82,11 @@ describe('game progress', () => {
       type: 'save-draft', pouchId: 'beginning', draft: { kind: 'quiz', questionId: 'first-meeting', selectedId: 'cafe', confirmed: false },
     });
     progress = gameReducer(progress, { type: 'navigate', scene: { kind: 'pouch', pouchId: 'beginning' } });
-    progress = gameReducer(progress, { type: 'find-secret', secretId: 'song' });
-    progress = gameReducer(progress, { type: 'find-secret', secretId: 'song' });
+    progress = gameReducer(progress, { type: 'find-secret', secretId: 'white-bueno' });
+    progress = gameReducer(progress, { type: 'find-secret', secretId: 'white-bueno' });
     expect(progress.drafts.beginning).toEqual({ kind: 'quiz', questionId: 'first-meeting', selectedId: 'cafe', confirmed: false });
     expect(progress.scene).toEqual({ kind: 'pouch', pouchId: 'beginning' });
-    expect(progress.foundSecrets).toEqual(['song']);
+    expect(progress.foundSecrets).toEqual(['white-bueno']);
     expect(getKeyCount(progress)).toBe(0);
   });
 

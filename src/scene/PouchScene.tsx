@@ -10,6 +10,8 @@ import { PhotoTask } from '../tasks/PhotoTask';
 import { PhraseTask } from '../tasks/PhraseTask';
 import { QuizTask } from '../tasks/QuizTask';
 import { pouchImages } from './assets';
+import { SecretSpot } from '../secrets/SecretSpot';
+import { secretImages } from '../secrets/assets';
 
 interface PouchSceneProps {
   pouchId: PouchId;
@@ -43,6 +45,9 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
       <StorageNotice />
       <p className="pouch-preview__subtitle">{pouch.subtitle}</p>
       <div className={`pouch-preview__art pouch-preview__art--${pouchId} pouch-preview__art--task${newReward ? ' pouch-preview__art--opening' : ''}`}>
+        {pouchId === 'proposal' && <SecretSpot secretId="green-dress" label="Край открытки" className="secret-spot--dress">
+          <span className="secret-spot__postcard"><img src={secretImages.dress} alt="" width="512" height="768" draggable="false" /></span>
+        </SecretSpot>}
         <img src={pouchImages[pouchId]} alt="" width="640" height="600" draggable="false" />
       </div>
       {showReward ? (

@@ -2,7 +2,8 @@ import dubaiImage from '../assets/content/journey-dubai.webp';
 import turkeyImage from '../assets/content/journey-turkey.webp';
 import egyptImage from '../assets/content/journey-egypt.webp';
 import familyImage from '../assets/content/family-keepsakes.webp';
-import type { LetterContent, PouchContent, PouchId, QuizTaskDefinition } from './types';
+import { secretImages } from '../secrets/assets';
+import type { LetterContent, PouchContent, PouchId, QuizTaskDefinition, SecretContent, SecretId } from './types';
 
 // Facts and order confirmed by the owner; hints, distractors and replies are draft copy.
 const beginningTask: QuizTaskDefinition = {
@@ -67,6 +68,25 @@ export const gameContent = {
   dedication: 'Для моей булочки',
   instruction: 'Выбери сумочку — в каждой маленькая тайна.',
   signature: 'Собрал с любовью. Для тебя.',
+  // Editorial drafts from confirmed facts; no personal photo has been supplied yet.
+  secrets: {
+    'green-dress': {
+      title: 'То самое зелёное платье',
+      text: 'Турция, 17 октября 2025-го. Ты в зелёном платье, а у нас впереди — новая глава. Как же я люблю, что в нашей истории есть этот день. И ты.',
+      image: { src: secretImages.dress, alt: 'Нарисованное изумрудно-зелёное платье на вешалке' },
+    },
+    'white-bueno': {
+      title: 'Белый Bueno',
+      text: 'У меня есть маленький способ сказать, что я о тебе думаю: принести тебе твой любимый белый Bueno. Люблю радовать тебя даже в самый обычный день, булочка.',
+      image: { src: secretImages.bueno, alt: 'Белый Bueno в приоткрытой светлой обёртке' },
+    },
+    'black-g-class': {
+      title: 'Одна мечта на будущее',
+      text: 'Чёрный Гелик — очень в твоём стиле. Есть у меня мечта: однажды подарить тебе такой. А пока здесь спряталась его маленькая версия. Пусть у нас будет ещё много красивых мечт на двоих.',
+      image: { src: secretImages.car, alt: 'Нарисованная миниатюра чёрного Mercedes Гелика' },
+    },
+  } satisfies Record<SecretId, SecretContent>,
+  bonusMessage: 'Все маленькие тайны нашлись. А мою главную ты давно знаешь: я люблю тебя. Мне хочется, чтобы в нашей жизни всегда оставалось место для таких маленьких радостей — и для больших мечт на двоих.',
   letter: {
     status: 'draft',
     greeting: 'Булочка моя,',

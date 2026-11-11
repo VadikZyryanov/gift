@@ -30,11 +30,16 @@ export function ScenePanel({ title, onBack, children, backLabel = 'На стол
   }, [returnFocusId]);
 
   return (
-    <dialog ref={dialogRef} className="scene-panel" aria-labelledby={titleId} onCancel={(event) => { event.preventDefault(); onBack(); }}>
+    <dialog ref={dialogRef} className="scene-panel" aria-labelledby={titleId} onCancel={(event) => {
+      event.preventDefault();
+      // React portal events still reach the underlying scene's handlers.
+      event.stopPropagation();
+      onBack();
+    }}>
       <div className="scene-panel__top">
         <button className="back-button" type="button" onClick={onBack}>
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          {backLabel}
+          <span>{backLabel}</span>
         </button>
         <span className="scene-panel__little-heart" aria-hidden="true">♡</span>
       </div>

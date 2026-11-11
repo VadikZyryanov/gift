@@ -101,3 +101,14 @@ Cyrillic-ext и Latin-ext для русского текста и обычной
 - Тестовый `e2e/fixtures/voice-tone.wav` — синтетический тон CC0-1.0,
   [описание](../../e2e/fixtures/LICENSE.md). Не входит в production-сборку.
 - Настоящее личное голосовое ещё не предоставлено; `voiceSrc` остаётся `null`.
+
+## Пасхалки — этап 5
+
+- `scene/secret-chest-back.webp` — задняя сторона того же сундука по его лицевой иллюстрации.
+- `content/secret-green-dress.webp` — временный рисунок изумрудного платья; это не точное личное платье.
+- `content/secret-white-bueno.webp` — нарисованный белый Bueno.
+- `content/secret-black-g-class.webp` — нарисованная миниатюра чёрного Mercedes Гелика.
+- Созданы встроенным `image_gen.imagegen`, проверены визуально и преобразованы
+  в WebP через `cwebp -q 85` с сохранением прозрачности.
+  [Prompts, оригиналы и размеры](../../docs/design/stage-5-asset-prompts.md).
+- Сторонние фотографии или рекламные изображения не скачивались.

@@ -3,6 +3,7 @@ import { KeyOrnament } from '../components/KeyOrnament';
 import { gameContent } from '../game/content';
 import { pouchIds, type PouchId } from '../game/types';
 import { pouchImages, sceneImages } from './assets';
+import { RotatingChest } from './RotatingChest';
 
 interface TableSceneProps {
   completedPouches: readonly PouchId[];
@@ -10,6 +11,8 @@ interface TableSceneProps {
   onOpenChest?: () => void;
   onOpenMenu?: () => void;
   soundControl?: ReactNode;
+  chestRear?: ReactNode;
+  flowerSecret?: ReactNode;
 }
 
 const lockedChestFrames: Keyframe[] = [
@@ -29,7 +32,7 @@ function HeartDivider() {
   );
 }
 
-export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenMenu, soundControl }: TableSceneProps) {
+export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenMenu, soundControl, chestRear, flowerSecret }: TableSceneProps) {
   const [hasCheckedLock, setHasCheckedLock] = useState(false);
   const chestArtRef = useRef<HTMLSpanElement>(null);
   const shakeAnimationRef = useRef<Animation | null>(null);
@@ -65,7 +68,6 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenM
       <div className="table">
         <div className="table-decor" aria-hidden="true">
           <img className="table-decor__flowers table-decor__flowers--top" src={sceneImages.decor} alt="" width="500" height="500" />
-          <img className="table-decor__flowers table-decor__flowers--bottom" src={sceneImages.decor} alt="" width="500" height="500" />
           <span className="table-decor__ribbon table-decor__ribbon--left" />
           <span className="table-decor__ribbon table-decor__ribbon--right" />
           {Array.from({ length: 9 }, (_, index) => <i key={index} className={`mote mote--${index + 1}`} />)}
@@ -109,14 +111,13 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenM
           <div className="key-row" aria-hidden="true">
             {pouchIds.map((id) => <span key={id} className={`key-ornament${completedPouches.includes(id) ? ' key-ornament--found' : ''}`}><KeyOrnament /></span>)}
           </div>
-          <button id="treasure-chest" className="chest" type="button" aria-label="Сундук" aria-describedby="chest-hint" onClick={event => {
-            event.currentTarget.focus({ preventScroll: true });
-            handleChestPress();
-          }}>
-            <span className="chest__art" ref={chestArtRef}>
-              <img src={sceneImages.chest} alt="" width="840" height="560" draggable="false" />
-            </span>
-          </button>
+          <div className="treasure__display">
+            <RotatingChest onPress={handleChestPress} artRef={chestArtRef} rearContent={chestRear} />
+            <div className="table-flower-corner">
+              {flowerSecret}
+              <img src={sceneImages.decor} alt="" width="500" height="500" aria-hidden="true" />
+            </div>
+          </div>
           <p id="chest-hint" className="chest-hint" role="status" aria-atomic="true">{chestHint}</p>
         </section>
 

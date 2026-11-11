@@ -1,15 +1,32 @@
 import { ScenePanel } from '../components/ScenePanel';
 import { StorageNotice } from '../components/StorageNotice';
 import { useGame } from '../game/GameProvider';
+import { gameContent } from '../game/content';
+import { secretIds } from '../game/types';
 
 export function FinaleScene() {
-  const { send } = useGame();
+  const { progress, send } = useGame();
+  const found = secretIds.filter(id => progress.foundSecrets.includes(id));
   const onBack = () => send({ type: 'navigate', scene: { kind: 'table' } });
   return <ScenePanel title="У этой истории есть продолжение" onBack={onBack} returnFocusId="treasure-chest">
     <StorageNotice />
     <div className="finale-keepsake" aria-hidden="true"><span>♡</span></div>
     <p className="finale-handwriting">Самый любимый человек — ты.</p>
     <p className="finale-copy">Все четыре маленькие истории уже здесь. А к письму можно возвращаться столько, сколько захочется.</p>
+    <section className="secret-results" aria-label="Найденные маленькие тайны">
+      <p className="secret-results__count" role="status">Маленькие тайны: {found.length} из {secretIds.length}</p>
+      <div className="secret-results__collection">
+        {secretIds.map(id => <div key={id} className="secret-results__item">
+          {found.includes(id) ? <>
+            <img src={gameContent.secrets[id].image.src} alt="" width="160" height="160" />
+            <span>{id === 'black-g-class' ? 'Чёрный Гелик' : id === 'green-dress' ? 'Зелёное платье' : 'Белый Bueno'}</span>
+          </> : <><span className="secret-results__unknown" aria-hidden="true">✧</span><span>Ещё одна тайна</span></>}
+        </div>)}
+      </div>
+      {found.length === secretIds.length ? <article className="secret-bonus" aria-label="Ещё кое-что для тебя">
+        <h3>Ещё кое-что для тебя</h3><p>{gameContent.bonusMessage}</p>
+      </article> : <p className="secret-results__invitation">Кажется, среди наших вещей спряталось ещё кое-что. Можно вернуться и присмотреться.</p>}
+    </section>
     <p className="content-draft">Здесь появится твой подарочный лист. Его мы составим отдельно, когда вся история будет готова.</p>
     <button className="story-button" type="button" onClick={() => send({ type: 'open-letter' })}>Перечитать письмо</button>
     <button className="story-button story-button--quiet" type="button" onClick={onBack}>Вернуться на стол</button>

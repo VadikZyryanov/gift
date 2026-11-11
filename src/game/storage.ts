@@ -16,6 +16,9 @@ function isSecretId(value: unknown): value is SecretId {
   return secretIds.some(id => id === value);
 }
 
+// These were scaffolding-only themes before playable secrets were introduced.
+const legacySecretIds: readonly string[] = ['song', 'paw-seal', 'postcard'];
+
 function parseScene(value: unknown): Scene | null {
   if (!isRecord(value)) return null;
   if (value.kind === 'pouch') return isPouchId(value.pouchId) ? { kind: 'pouch', pouchId: value.pouchId } : null;
@@ -58,7 +61,8 @@ function parseDraft(task: TaskDefinition, draft: unknown): TaskDraft | null {
 function parseProgress(value: unknown, contentRevision: number): GameProgress | null {
   if (!isRecord(value) || value.schemaVersion !== 1 || value.contentRevision !== contentRevision) return null;
   if (!Array.isArray(value.completedPouches) || !value.completedPouches.every(isPouchId)) return null;
-  if (!Array.isArray(value.foundSecrets) || !value.foundSecrets.every(isSecretId)) return null;
+  if (!Array.isArray(value.foundSecrets) || !value.foundSecrets.every((id: unknown) =>
+    isSecretId(id) || (typeof id === 'string' && legacySecretIds.includes(id)))) return null;
   if (typeof value.chestOpened !== 'boolean' || typeof value.letterOpened !== 'boolean' || typeof value.secondBottomOpened !== 'boolean') return null;
   const scene = parseScene(value.scene);
   if (!scene || !isRecord(value.drafts)) return null;
@@ -71,7 +75,7 @@ function parseProgress(value: unknown, contentRevision: number): GameProgress | 
   }
   const progress: GameProgress = {
     schemaVersion: 1, contentRevision,
-    completedPouches: [...new Set(value.completedPouches)], foundSecrets: [...new Set(value.foundSecrets)],
+    completedPouches: [...new Set(value.completedPouches)], foundSecrets: [...new Set(value.foundSecrets.filter(isSecretId))],
     drafts, chestOpened: value.chestOpened, letterOpened: value.letterOpened,
     secondBottomOpened: value.secondBottomOpened, scene,
   };

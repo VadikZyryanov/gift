@@ -16,8 +16,14 @@ export interface PouchPreview {
   description: string;
 }
 
-export const secretIds = ['song', 'paw-seal', 'postcard'] as const;
+export const secretIds = ['green-dress', 'white-bueno', 'black-g-class'] as const;
 export type SecretId = (typeof secretIds)[number];
+
+export interface SecretContent {
+  title: string;
+  text: string;
+  image: TaskImageSource;
+}
 
 export type Scene =
   | { kind: 'table' }

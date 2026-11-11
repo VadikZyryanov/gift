@@ -9,7 +9,7 @@ const revision = gameContent.revision;
 const quizDraft = { kind: 'quiz', questionId: 'song', selectedId: 'kitkat', confirmed: true } as const;
 const saved: GameProgress = {
   schemaVersion: 1, contentRevision: revision,
-  completedPouches: ['family', 'beginning', 'journey', 'proposal'], foundSecrets: ['song', 'postcard'],
+  completedPouches: ['family', 'beginning', 'journey', 'proposal'], foundSecrets: ['white-bueno', 'green-dress'],
   drafts: { beginning: quizDraft },
   chestOpened: true, letterOpened: true, secondBottomOpened: true, scene: { kind: 'finale' },
 };
@@ -17,6 +17,13 @@ const saved: GameProgress = {
 beforeEach(() => { localStorage.clear(); vi.restoreAllMocks(); });
 
 describe('progress storage', () => {
+  it('migrates unused legacy secret IDs without losing keys, drafts or the opened finale', () => {
+    localStorage.setItem(key, JSON.stringify({ ...saved, foundSecrets: ['song', 'white-bueno', 'paw-seal', 'postcard', 'white-bueno'] }));
+    expect(readProgress(localStorage, revision)).toEqual({
+      progress: { ...saved, foundSecrets: ['white-bueno'] }, status: 'available',
+    });
+  });
+
   it('restores every task kind together without losing the existing quiz', () => {
     const progress: GameProgress = {
       ...createInitialProgress(revision),
@@ -87,10 +94,10 @@ describe('progress storage', () => {
   });
 
   it('deduplicates valid saved IDs without creating extra keys', () => {
-    localStorage.setItem(key, JSON.stringify({ ...saved, completedPouches: [...saved.completedPouches, 'beginning'], foundSecrets: ['song', 'song'] }));
+    localStorage.setItem(key, JSON.stringify({ ...saved, completedPouches: [...saved.completedPouches, 'beginning'], foundSecrets: ['white-bueno', 'white-bueno'] }));
     const { progress } = readProgress(localStorage, revision);
     expect(progress.completedPouches).toEqual(['family', 'beginning', 'journey', 'proposal']);
-    expect(progress.foundSecrets).toEqual(['song']);
+    expect(progress.foundSecrets).toEqual(['white-bueno']);
   });
 
   it('reports unavailable reads and writes without throwing', () => {

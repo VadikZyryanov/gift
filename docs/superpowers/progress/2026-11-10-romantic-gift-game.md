@@ -1,5 +1,44 @@
 # Implementation ledger — plan: docs/superpowers/plans/2026-11-10-romantic-gift-game-implementation.md
 
+## Owner refinement — Bueno behind flowers on the table
+
+- Owner requested moving white Bueno from the Beginning pouch to the main scene behind flowers. Same secret ID/note/save; no content revision or progress reset.
+- Moved the existing SecretSpot through a table prop, outside aria-hidden decorative markup. The lower-right flowers cover part of the wrapper while allowing taps through; the ornament is anchored beside the chest so large footer text does not collide with the target.
+- Updated existing secret E2E for the new table location, draft restoration after a visit to the table, rereading/reload, Escape focus/scroll return, and narrow text layout. Placement RED on the old pouch location; mobile GREEN: 23 passed, 1 expected CDP-only skip. Logs: /private/tmp/gift-bueno-move-{red,e2e}.log. Unit suite: 118/118, /private/tmp/gift-bueno-move-unit.log.
+- Additional visual inspection found an existing WebKit compositing defect: the inactive rear artwork painted over the front despite backface-visibility, exposing the G-Class sticker in reverse. Removing the new flowers/wrapper did not change it; individual filter/transform changes did not fix it either. Explicit inactive-face visibility fixed the observed rendering.
+- Added a real pixel-occlusion E2E: a screenshot of each visible side must stay identical when the opposing side is explicitly hidden. RED confirmed leakage on both sides in WebKit, /private/tmp/gift-chest-face-red.log. CSS now synchronizes visibility with existing aria-hidden side state while preserving the mounted images and touch rotation. GREEN: pixel-occlusion checks in all three projects; full npm run test:e2e passed 133 scenarios with 2 expected CDP-only skips, plus build/typecheck. Log: /private/tmp/gift-bueno-move-final-e2e.log.
+- Inspected WebKit 440px and 320px/200% text: wrapper's clipped visible target width exceeds 44px, its bounds do not overlap the chest control, no horizontal page overflow, tap and close work. Screenshots /private/tmp/gift-bueno-flowers-{440,320}.png and final front /private/tmp/gift-bueno-chest-fixed.png. Device appearance still awaits owner review; no new assets/dependencies or Git operations.
+
+## Stage 5 — technically complete, awaiting owner review
+
+- Owner selected green dress, white Bueno and black G-Class instead of the earlier draft secrets; approved their locations and chest rotation directly on the table. Temporarily illustrated dress is delegated to the implementer, personal photo replacement later. Scope: docs/superpowers/specs/2026-11-11-stage-5-secrets-design.md.
+- Ruling: continue the already-authorized stage 5 in this checkout after the location/interaction discussion; the owner delegated the last artwork choice. No additional design questionnaire, Git operations or deferred finale redesign.
+- Pre-flight: find-secret already persists idempotently; new themed IDs replace unused draft IDs. Narrow migration drops only known legacy secret IDs while preserving revision 2, keys, drafts and stable scenes. Unknown data still recovers safely.
+- Ruling: prepared front/back artwork with CSS perspective and side faces, no WebGL/dependencies; gestures rotate only after horizontal intent and never synthesize an opening click. Cost if wrong: illustration-based depth may need visual refinement after device review.
+- 5.1 RED: storage migration lost all progress before implementation (1 failed, 38 passed); actual UI failed on missing Bueno spot and rotating group. Logs: /private/tmp/gift-stage5-{storage,ui,rotation}-red.log. SecretSpot component RED initially failed on the missing module, not a behavior assertion.
+- 5.2–5.3: three themed IDs, narrow legacy migration, reusable SecretSpot/SecretNote, peek-out keepsakes in two pouches, persistent idempotent discoveries, finale-only count/collection and bonus. Notes preserve current task drafts and focus. Front art remains the same DOM image throughout checks and turns.
+- 5.4: local illustrated rear, dress, white Bueno and black G-Class generated with built-in imagegen, inspected and optimized as transparent WebP; exact prompts/paths in docs/design/stage-5-asset-prompts.md. Existing optional found effect only; owner's larger audio/finale changes remain deferred, including the known stage-4 second-bottom sound cancellation.
+- Gesture regression: vertical intent discarded its gesture too early, leaving suppression active after pointercancel. RED in WebKit and Chromium (2 failed), then retained vertical state through cancellation and added pointer-leave cleanup. GREEN: 3 targeted passed, 1 CDP-only skip; real Chromium touch scroll and horizontal touchCancel also passed.
+- 5.5: npm run test:unit -> 118/118 (11 files); npm run test:e2e -> 115 passed, 2 expected CDP-only skips in WebKit/desktop, with typecheck/build and all three projects. Logs: /private/tmp/gift-stage5-unit-green.log, /private/tmp/gift-stage5-full-e2e.log. git diff --check passed. No production dependencies added.
+- Visual inspection: actual WebKit screenshots /private/tmp/gift-stage5-{table,back,car-note,bueno-spot,bueno-note,dress-spot,dress-note}.png, all illustrations loaded, no JS errors, source focus/body scrolling restored. Pouch secret target bounds exceeded 44px. Physical iPhone/Yandex/VoiceOver/flicker/acoustic quality remain manual.
+- Local dev server was not running; started Vite for owner review at http://192.168.0.160:5173/gift/ (session 38140). No commit, push or deployment. Fresh final review and fix pass recorded below.
+- Fresh read-only final reviewer confirmed two Important findings, no Critical/Minor: portalled cancel bubbled into the pouch and left scroll locked; long 60×55px diagonal movement stayed pending and generated press. Implementer's additional visual check found 320px/200% note-header overflow. All reproduced in new E2E (10/10 RED on WebKit/Chromium), /private/tmp/gift-stage5-review-red.log.
+- One fix pass: ScenePanel stops cancel propagation; chest suppresses click beyond movement slop independently of axis choice; back-label span can shrink/wrap inside the header. Targeted regression GREEN: 10/10 in WebKit/Chromium, /private/tmp/gift-stage5-review-green.log. Final full suite: 118/118 unit and 130 E2E passed + 2 expected CDP-only skips, including fresh build/typecheck. Logs: /private/tmp/gift-stage5-final-unit.log and /private/tmp/gift-stage5-final-e2e.log. No second review dispatched.
+- Final: Ruling: deferred finale/envelope/gift redesign stays out of stage 5 by explicit owner instruction — cost: the current letter still uses the earlier modal/second-bottom flow and no gift catalogue yet.
+- Final: Ruling: real dress photo, final notes/bonus/letter/voice remain later content work; current art and copy are editorial drafts — cost: personal release still needs owner materials/approval.
+- Final: Ruling: physical iPhone/Yandex/VoiceOver/acoustics/compositor behavior are not established by browser tests — cost: owner's device review remains required.
+- Final: Ruling: visual hover/focus effects stay excluded by owner's explicit choice; keyboard interaction/focus restoration remain functional — cost: no visible keyboard focus ring.
+- Final: minor (previously deferred): second-bottom paper sound can be cancelled by leaving-letter cleanup. Retained under owner's deferred sound/finale rework; new secret-found effects are wired to the existing optional provider.
+
+- Final verification: all 29 changed/new text files checked for whitespace/EOF and Markdown local links; no issues. Post-fix WebKit narrow-note screenshot /private/tmp/gift-stage5-narrow-note-fixed.png has no horizontal overflow. Finale/bonus screenshots also inspected.
+- Stage 5 tasks 5.1–5.5 complete for manual checkpoint. Owner should inspect subtlety of the three spots, illustrated CSS depth/turning, scroll and repeated touches on the actual iPhone/Yandex. Stage 6 not started. No commit, branch, push or publication.
+
+## Owner feedback after stage 4 — recorded, implementation deferred
+
+- Stage 4 committed as 2d1fc8a. Owner explicitly requested documentation only, with implementation later.
+- Requested: after the fourth key, lock flies off, chest opens/enlarges to full screen and letter flies forward; rotatable envelope that must be flipped and tapped; letter as a standalone sheet instead of a modal; replace second-bottom action with a transition to the eventual real gift-selection sheet; replace/refine sounds.
+- Full notes: docs/design/2026-11-10-finale-feedback.md, linked from the plan. These supersede the old final-flow direction for future work but are not implemented. Gift content/budget/rules remain undecided. No application code or tests changed; no commit, branch, push or deployment.
+
 ## Stage 4 — technically complete, awaiting owner review
 
 - Owner requested the next checkpoint after committing stage 3. Scope: chest, envelope, draft letter, second bottom and optional audio. No Git operations or publication.
@@ -24,7 +63,7 @@
 
 ## Scope and decisions
 
-- Current checkpoint: stage 4, chest/letter/audio; stages 1–3 are committed. Stages 5–7 remain pending.
+- Current checkpoint: stage 5, secrets and rotating chest; stages 1–4 are committed. Stages 6–7 remain pending.
 - Ruling: work in the current checkout, without creating a branch/worktree — the approved plan explicitly selects this checkout and reserves Git operations for a separate request.
 - Ruling: pause after this checkpoint for the owner's manual review — the approved staged workflow takes precedence over the execution skill's continuous-run default.
 - Ruling: keep this durable ledger in docs, without skill scripts that stage/commit Git changes — Git operations require a separate owner request.
