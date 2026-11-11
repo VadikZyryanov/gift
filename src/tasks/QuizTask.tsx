@@ -51,11 +51,12 @@ export function QuizTask({ task, draft, onDraftChange, onSolved }: QuizTaskProps
   }
 
   return (
-    <form className="quiz-task" onSubmit={checkAnswer}>
+    <form className={`quiz-task${question.questionImage ? ' quiz-task--photo' : ''}`} onSubmit={checkAnswer}>
       <p className="quiz-task__progress">Воспоминание {questionIndex + 1} из {task.questions.length}</p>
       {!confirmed && <fieldset aria-describedby={showHint ? `${id}-feedback` : undefined}>
         <legend ref={legendRef} tabIndex={-1}>{question.question}</legend>
-        <p className="quiz-task__invitation">Давай вспомним нашу историю.</p>
+        <p className="quiz-task__invitation">{question.questionImage ? 'Узнаешь, где мы были? Выбери один из четырёх вариантов.' : 'Давай вспомним нашу историю.'}</p>
+        {question.questionImage && <div className="quiz-task__picture"><TaskImage {...question.questionImage} /></div>}
         <div className="quiz-task__choices">
           {question.options.map(option => (
             <label key={option.id} className={`quiz-choice${selectedId === option.id ? ' quiz-choice--selected' : ''}`}>

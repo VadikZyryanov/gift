@@ -27,7 +27,7 @@ function Game() {
         completedPouches={progress.completedPouches}
         onOpenPouch={pouchId => {
           send({ type: 'navigate', scene: { kind: 'pouch', pouchId } });
-          if (pouchId === 'beginning') playEffect('paper');
+          if (pouchId === 'beginning' || pouchId === 'journey') playEffect('paper');
         }}
         onOpenMenu={() => setMenuOpen(true)}
         onOpenChest={() => { send({ type: 'open-chest' }); playEffect('unlock'); }}

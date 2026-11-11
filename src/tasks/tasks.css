@@ -4,6 +4,11 @@
 .quiz-task legend { width: 100%; padding: 0; outline: none; font-size: 1.125rem; font-weight: 600; line-height: 1.65; text-align: center; overflow-wrap: anywhere; }
 .quiz-task__invitation { margin: 10px 0 18px; color: #815570; font-size: .875rem; line-height: 1.7; text-align: center; }
 .quiz-task__choices { display: grid; gap: 10px; }
+.quiz-task__picture { margin: 0 0 18px; padding: 8px; border: 1px solid #d8b8c6; border-radius: 16px 4px 16px 4px; background: #fff5ea80; box-shadow: 0 6px 20px #713f6415; }
+.quiz-task__picture .task-image { width: 100%; height: auto; max-height: 48svh; aspect-ratio: auto; object-fit: contain; border-radius: 8px 2px 8px 2px; }
+.quiz-task--photo .quiz-task__choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.quiz-task--photo .quiz-choice { gap: 8px; padding: 12px 10px; }
+.quiz-task--photo .quiz-choice__heart { display: none; }
 .quiz-choice { display: flex; min-height: 54px; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid #d8b8c6; border-radius: 14px; background: #fff6eb99; cursor: pointer; overflow-wrap: anywhere; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 .quiz-choice--selected { border-color: var(--berry); background: #f8dfdf; }
 .quiz-choice input { flex: 0 0 20px; width: 20px; height: 20px; margin: 0; border: 1.5px solid #b3839b; border-radius: 50%; appearance: none; outline: none; }

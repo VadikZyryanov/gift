@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 async function openLastQuestion(page: Page) {
   await page.goto('./');
   await page.evaluate(() => localStorage.setItem('gift:progress:v1', JSON.stringify({
-    schemaVersion: 1, contentRevision: 2, completedPouches: [], foundSecrets: [],
+    schemaVersion: 1, contentRevision: 3, completedPouches: [], foundSecrets: [],
     drafts: { beginning: { kind: 'quiz', questionId: 'song', selectedId: 'kitkat', confirmed: false } },
     chestOpened: false, letterOpened: false, secondBottomOpened: false,
     scene: { kind: 'pouch', pouchId: 'beginning' },
@@ -151,22 +151,24 @@ test('skips the long flight and heart reveal when reduced motion is requested', 
   await expect(page.getByRole('status', { name: 'Сладкая находка' })).toHaveCount(0);
 });
 
-test('opens from a heart and plays an opening sound only with effects enabled by a gesture', async ({ page }) => {
-  await page.addInitScript(() => {
-    const start = AudioBufferSourceNode.prototype.start;
-    AudioBufferSourceNode.prototype.start = function (...args: Parameters<typeof start>) {
-      document.documentElement.dataset.audioStarts = String(Number(document.documentElement.dataset.audioStarts ?? 0) + 1);
-      return start.apply(this, args);
-    };
+for (const pouchName of ['Начало', 'Далеко от дома']) {
+  test(`${pouchName} opens from a heart and plays an opening sound only with effects enabled by a gesture`, async ({ page }) => {
+    await page.addInitScript(() => {
+      const start = AudioBufferSourceNode.prototype.start;
+      AudioBufferSourceNode.prototype.start = function (...args: Parameters<typeof start>) {
+        document.documentElement.dataset.audioStarts = String(Number(document.documentElement.dataset.audioStarts ?? 0) + 1);
+        return start.apply(this, args);
+      };
+    });
+    await page.goto('./');
+    await page.getByRole('button', { name: pouchName, exact: true }).click();
+    await expect(page.getByRole('dialog')).toHaveCSS('animation-name', 'panel-heart-arrive');
+    expect(await page.evaluate(() => Number(document.documentElement.dataset.audioStarts ?? 0))).toBe(0);
+    await page.getByRole('button', { name: 'На стол', exact: true }).click();
+    await page.getByRole('button', { name: 'Включить звуки', exact: true }).click();
+    await page.getByRole('button', { name: pouchName, exact: true }).click();
+    await expect.poll(() => page.evaluate(() => Number(document.documentElement.dataset.audioStarts ?? 0))).toBe(1);
+    await page.reload();
+    expect(await page.evaluate(() => Number(document.documentElement.dataset.audioStarts ?? 0))).toBe(0);
   });
-  await page.goto('./');
-  await page.getByRole('button', { name: 'Начало', exact: true }).click();
-  await expect(page.getByRole('dialog')).toHaveCSS('animation-name', 'panel-heart-arrive');
-  expect(await page.evaluate(() => Number(document.documentElement.dataset.audioStarts ?? 0))).toBe(0);
-  await page.getByRole('button', { name: 'На стол', exact: true }).click();
-  await page.getByRole('button', { name: 'Включить звуки', exact: true }).click();
-  await page.getByRole('button', { name: 'Начало', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => Number(document.documentElement.dataset.audioStarts ?? 0))).toBe(1);
-  await page.reload();
-  expect(await page.evaluate(() => Number(document.documentElement.dataset.audioStarts ?? 0))).toBe(0);
-});
+}

@@ -24,13 +24,13 @@ describe('progress storage', () => {
     });
   });
 
-  it('restores every task kind together without losing the existing quiz', () => {
+  it('restores travel photo questions together with the other pouch drafts', () => {
     const progress: GameProgress = {
       ...createInitialProgress(revision),
       completedPouches: ['beginning'],
       drafts: {
         beginning: quizDraft,
-        journey: { kind: 'photo', selectedId: 'turkey' },
+        journey: { kind: 'quiz', questionId: 'journey-03', selectedId: 'turkey', confirmed: true },
         proposal: { kind: 'phrase', selectedWordIds: ['with', 'you'] },
         family: { kind: 'detail', inspectedIds: ['flowers', 'rings'] },
       },
@@ -43,6 +43,8 @@ describe('progress storage', () => {
   it.each([
     { journey: { kind: 'photo', selectedId: 'unknown' } },
     { journey: { kind: 'photo' } },
+    { journey: { kind: 'quiz', questionId: 'journey-02', selectedId: 'unknown', confirmed: false } },
+    { journey: { kind: 'quiz', questionId: 'journey-02', selectedId: 'turkey', confirmed: true } },
     { proposal: { kind: 'phrase', selectedWordIds: ['unknown'] } },
     { proposal: { kind: 'phrase', selectedWordIds: ['with', 'with'] } },
     { proposal: { kind: 'phrase', selectedWordIds: 'with' } },

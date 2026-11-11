@@ -1,6 +1,4 @@
-import dubaiImage from '../assets/content/journey-dubai.webp';
-import turkeyImage from '../assets/content/journey-turkey.webp';
-import egyptImage from '../assets/content/journey-egypt.webp';
+import { journeyTask } from './journey';
 import familyImage from '../assets/content/family-keepsakes.webp';
 import beachImage from '../assets/content/beginning-beach.webp';
 import bouquetImage from '../assets/content/beginning-bouquet.webp';
@@ -48,7 +46,7 @@ const beginningTask: QuizTaskDefinition = {
       ],
       correctId: 'february-16',
       hint: 'В феврале 2025-го, через два дня после Дня всех влюблённых.',
-      successMessage: '16 февраля — наше первое свидание. Как же хорошо, что у нас есть этот день.',
+      successMessage: '16 февраля — наше первое свидание, помню как сильно я волновался. Кафе Happy, символично что так называлось наше первое место, ведь впереди столько счастья.',
       successImage: { src: cafeImage, alt: 'Кафе нашего первого свидания', width: 1080, height: 710 },
     },
     {
@@ -66,9 +64,9 @@ const beginningTask: QuizTaskDefinition = {
   ],
 };
 
-// Beginning uses owner-supplied photos; remaining copy/art still need personal review.
+// Beginning and journey use owner-supplied photos; remaining copy/art still need personal review.
 export const gameContent = {
-  revision: 2,
+  revision: 3,
   status: 'draft',
   title: 'KitKat в чемодане',
   dedication: 'Для моей булочки',
@@ -113,26 +111,15 @@ export const gameContent = {
       subtitle: 'Сладкая маленькая тайна',
       description: 'Некоторые истории начинаются с маленькой сладости. А потом становятся целым миром.',
       task: beginningTask,
-      rewardNote: 'Одна маленькая сладость стала названием песни для тебя. А ты — моей самой любимой историей. Этот ключ твой, булочка.',
+      rewardNote: 'Одна маленькая сладость стала названием песни для тебя. А ты — моей самой любимой историей. Этот ключ твой.',
     },
     journey: {
       status: 'draft',
       title: 'Далеко от дома',
       subtitle: 'Наши маленькие побеги',
       description: 'Важнее любого места на карте — тот, кто рядом. У этой сумочки есть своя история о нас.',
-      task: {
-        kind: 'photo',
-        question: 'Куда мы впервые отправились вместе?',
-        caption: 'Пока здесь нарисованные открытки. Позже появятся наши фотографии.',
-        options: [
-          { id: 'turkey', label: 'Турция', image: { src: turkeyImage, alt: 'Турция: морская бухта и цветущая бугенвиллея' } },
-          { id: 'dubai', label: 'Дубай', image: { src: dubaiImage, alt: 'Дубай: небоскрёбы у воды в персиковом закате' } },
-          { id: 'egypt', label: 'Египет', image: { src: egyptImage, alt: 'Египет: пирамиды среди золотистых песков' } },
-        ],
-        correctId: 'dubai',
-        hint: 'Эта поездка тоже была, но не первой. Вспомни город с высокими небоскрёбами.',
-      },
-      rewardNote: 'Дубай — наша первая поездка. С тобой любое место становится особенным. Пусть впереди будет ещё много наших маленьких побегов.',
+      task: journeyTask,
+      rewardNote: 'Столько мест и столько воспоминаний на двоих. С тобой любое место становится особенным. Пусть впереди будет ещё много наших маленьких побегов. Этот ключ твой.',
     },
     proposal: {
       status: 'draft',

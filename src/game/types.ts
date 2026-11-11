@@ -43,6 +43,7 @@ export type TaskDraft =
 export interface QuizQuestion {
   id: string;
   question: string;
+  questionImage?: TaskImageSource;
   options: readonly { id: string; label: string }[];
   correctId: string;
   hint: string;

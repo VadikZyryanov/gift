@@ -1,16 +1,39 @@
 import { expect, test } from '@playwright/test';
 import { completeGameTasks } from './helpers';
 
-test('restores a selected travel postcard before checking the answer', async ({ page }) => {
+test('restores travel photo answers and awards one key only after all eight photographs', async ({ page }) => {
   await page.goto('./');
   await page.getByRole('button', { name: 'Далеко от дома', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveClass(/scene-panel--heart/);
+  await expect(page.getByRole('radio')).toHaveCount(4);
+  const photo = page.getByRole('img', { name: 'Наше путешествие — фотография 1', exact: true });
+  await expect(photo).toBeVisible();
+  await expect.poll(() => photo.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await page.getByRole('radio', { name: 'Египет', exact: true }).check();
+  await page.getByRole('button', { name: 'Проверить ответ', exact: true }).click();
+  await expect(page.getByRole('dialog').getByRole('status')).toContainText('попробуй ещё раз');
+  await page.reload();
+  await expect(page.getByRole('radio', { name: 'Египет', exact: true })).toBeChecked();
   await page.getByRole('radio', { name: 'Турция', exact: true }).check();
   await page.getByRole('button', { name: 'Проверить ответ', exact: true }).click();
-  await expect(page.getByRole('dialog').getByRole('status')).toContainText('не первой');
   await page.reload();
-  await expect(page.getByRole('radio', { name: 'Турция', exact: true })).toBeChecked();
+  await expect(page.getByRole('button', { name: 'Дальше', exact: true })).toBeVisible();
+  await expect(page.getByText('Ключ найден', { exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Дальше', exact: true }).click();
   await page.getByRole('radio', { name: 'Дубай', exact: true }).check();
-  await page.getByRole('button', { name: 'Проверить ответ', exact: true }).click();
+  await page.reload();
+  await expect(page.getByText('Воспоминание 2 из 8', { exact: true })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Дубай', exact: true })).toBeChecked();
+  const remainingAnswers = ['Дубай', 'Турция', 'Россия', 'Турция', 'Египет', 'Дубай', 'Россия'];
+  for (const [index, answer] of remainingAnswers.entries()) {
+    await expect(page.getByRole('radio')).toHaveCount(4);
+    await page.getByRole('radio', { name: answer, exact: true }).check();
+    await page.getByRole('button', { name: 'Проверить ответ', exact: true }).click();
+    if (index < remainingAnswers.length - 1) {
+      await expect(page.getByText('Ключ найден', { exact: true })).toHaveCount(0);
+      await page.getByRole('button', { name: 'Дальше', exact: true }).click();
+    }
+  }
   await page.reload();
   await expect(page.getByText('Ключ найден', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'На стол', exact: true }).click();
@@ -85,7 +108,8 @@ test('keeps the new tasks usable at 320px with enlarged text and reduced motion'
     await page.getByRole('button', { name, exact: true }).click();
     const dialog = page.getByRole('dialog');
     expect(await dialog.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
-    const targets = dialog.locator('.photo-choice, .phrase-word, .detail-spot');
+    const targets = dialog.locator('.quiz-choice, .phrase-word, .detail-spot');
+    expect(await targets.count()).toBeGreaterThan(0);
     expect(await targets.evaluateAll(elements => elements.every(element => {
       const rect = element.getBoundingClientRect();
       return rect.width >= 44 && rect.height >= 44 && element.scrollWidth <= element.clientWidth + 1;

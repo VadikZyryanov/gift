@@ -13,10 +13,15 @@ export async function solvePouch(page: Page, pouchId: PouchId): Promise<void> {
         if (answer !== 'KitKat') await page.getByRole('button', { name: 'Дальше', exact: true }).click();
       }
       break;
-    case 'journey':
-      await page.getByRole('radio', { name: 'Дубай', exact: true }).check();
-      await page.getByRole('button', { name: 'Проверить ответ', exact: true }).click();
+    case 'journey': {
+      const answers = ['Турция', 'Дубай', 'Турция', 'Россия', 'Турция', 'Египет', 'Дубай', 'Россия'];
+      for (const [index, answer] of answers.entries()) {
+        await page.getByRole('radio', { name: answer, exact: true }).check();
+        await page.getByRole('button', { name: 'Проверить ответ', exact: true }).click();
+        if (index < answers.length - 1) await page.getByRole('button', { name: 'Дальше', exact: true }).click();
+      }
       break;
+    }
     case 'proposal':
       for (const word of ['С', 'тобой', 'навсегда']) await page.getByRole('button', { name: `Добавить слово «${word}»`, exact: true }).click();
       await page.getByRole('button', { name: 'Проверить фразу', exact: true }).click();

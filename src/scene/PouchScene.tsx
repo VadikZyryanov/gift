@@ -6,7 +6,6 @@ import { gameContent } from '../game/content';
 import { useGame } from '../game/GameProvider';
 import type { PouchId, TaskDraft } from '../game/types';
 import { DetailTask } from '../tasks/DetailTask';
-import { PhotoTask } from '../tasks/PhotoTask';
 import { PhraseTask } from '../tasks/PhraseTask';
 import { QuizTask } from '../tasks/QuizTask';
 import { pouchImages } from './assets';
@@ -48,13 +47,12 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
   function renderTask() {
     switch (task.kind) {
       case 'quiz': return <QuizTask task={task} draft={draft?.kind === 'quiz' ? draft : undefined} {...callbacks} />;
-      case 'photo': return <PhotoTask task={task} draft={draft?.kind === 'photo' ? draft : undefined} {...callbacks} />;
       case 'phrase': return <PhraseTask task={task} draft={draft?.kind === 'phrase' ? draft : undefined} {...callbacks} />;
       case 'detail': return <DetailTask task={task} draft={draft?.kind === 'detail' ? draft : undefined} {...callbacks} />;
     }
   }
   return (
-    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`} entrance={pouchId === 'beginning' ? 'heart' : undefined}>
+    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`} entrance={pouchId === 'beginning' || pouchId === 'journey' ? 'heart' : undefined}>
       <StorageNotice />
       <p className="pouch-preview__subtitle">{pouch.subtitle}</p>
       <div className={`pouch-preview__art pouch-preview__art--${pouchId} pouch-preview__art--task${newReward ? ' pouch-preview__art--opening' : ''}`}>
