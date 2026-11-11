@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import type { QuizDraft, QuizTaskDefinition } from '../game/types';
+import { TaskImage } from './TaskImage';
 import './tasks.css';
 
 interface QuizTaskProps {
@@ -17,14 +18,16 @@ export function QuizTask({ task, draft, onDraftChange, onSolved }: QuizTaskProps
   const selectedId = draft?.selectedId ?? null;
   const confirmed = draft?.confirmed ?? false;
   const legendRef = useRef<HTMLLegendElement>(null);
-  const previousQuestionId = useRef(question.id);
+  const memoryRef = useRef<HTMLElement>(null);
+  const previousStep = useRef({ questionId: question.id, confirmed });
 
   useEffect(() => {
-    if (previousQuestionId.current === question.id) return;
-    previousQuestionId.current = question.id;
-    legendRef.current?.focus({ preventScroll: true });
-    legendRef.current?.scrollIntoView?.({ block: 'nearest' });
-  }, [question.id]);
+    if (previousStep.current.questionId === question.id && previousStep.current.confirmed === confirmed) return;
+    previousStep.current = { questionId: question.id, confirmed };
+    const target = confirmed ? memoryRef.current : legendRef.current;
+    target?.focus({ preventScroll: true });
+    target?.scrollIntoView?.({ block: 'start' });
+  }, [question.id, confirmed]);
 
   function checkAnswer(event: FormEvent) {
     event.preventDefault();
@@ -50,7 +53,7 @@ export function QuizTask({ task, draft, onDraftChange, onSolved }: QuizTaskProps
   return (
     <form className="quiz-task" onSubmit={checkAnswer}>
       <p className="quiz-task__progress">Воспоминание {questionIndex + 1} из {task.questions.length}</p>
-      <fieldset disabled={confirmed} aria-describedby={showHint || confirmed ? `${id}-feedback` : undefined}>
+      {!confirmed && <fieldset aria-describedby={showHint ? `${id}-feedback` : undefined}>
         <legend ref={legendRef} tabIndex={-1}>{question.question}</legend>
         <p className="quiz-task__invitation">Давай вспомним нашу историю.</p>
         <div className="quiz-task__choices">
@@ -65,10 +68,13 @@ export function QuizTask({ task, draft, onDraftChange, onSolved }: QuizTaskProps
             </label>
           ))}
         </div>
-      </fieldset>
-      <p id={`${id}-feedback`} className={confirmed ? 'task-success' : showHint ? 'task-hint' : 'quiz-task__feedback-empty'} role="status">
-        {confirmed ? question.successMessage : showHint ? question.hint : ''}
-      </p>
+      </fieldset>}
+      {confirmed ? <section className="quiz-memory" ref={memoryRef} tabIndex={-1} aria-label="Наше воспоминание">
+        <p id={`${id}-feedback`} className="task-success" role="status">{question.successMessage}</p>
+        {question.successImage && <div className="quiz-memory__picture"><TaskImage {...question.successImage} /></div>}
+      </section> : <p id={`${id}-feedback`} className={showHint ? 'task-hint' : 'quiz-task__feedback-empty'} role="status">
+        {showHint ? question.hint : ''}
+      </p>}
       <button className="story-button" type="submit" disabled={selectedId === null}>{confirmed ? 'Дальше' : 'Проверить ответ'}</button>
     </form>
   );

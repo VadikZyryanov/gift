@@ -25,7 +25,10 @@ function Game() {
       {progress.scene.kind === 'table' && !menuOpen && <StorageNotice />}
       <TableScene
         completedPouches={progress.completedPouches}
-        onOpenPouch={pouchId => send({ type: 'navigate', scene: { kind: 'pouch', pouchId } })}
+        onOpenPouch={pouchId => {
+          send({ type: 'navigate', scene: { kind: 'pouch', pouchId } });
+          if (pouchId === 'beginning') playEffect('paper');
+        }}
         onOpenMenu={() => setMenuOpen(true)}
         onOpenChest={() => { send({ type: 'open-chest' }); playEffect('unlock'); }}
         soundControl={<SoundToggle />}

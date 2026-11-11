@@ -2,6 +2,9 @@ import dubaiImage from '../assets/content/journey-dubai.webp';
 import turkeyImage from '../assets/content/journey-turkey.webp';
 import egyptImage from '../assets/content/journey-egypt.webp';
 import familyImage from '../assets/content/family-keepsakes.webp';
+import beachImage from '../assets/content/beginning-beach.webp';
+import bouquetImage from '../assets/content/beginning-bouquet.webp';
+import cafeImage from '../assets/content/beginning-cafe.webp';
 import { secretImages } from '../secrets/assets';
 import type { LetterContent, PouchContent, PouchId, QuizTaskDefinition, SecretContent, SecretId } from './types';
 
@@ -15,11 +18,12 @@ const beginningTask: QuizTaskDefinition = {
       options: [
         { id: 'cafe', label: 'В кафе' },
         { id: 'beach', label: 'На пляже' },
-        { id: 'friends', label: 'У друзей' },
+        { id: 'friends', label: 'В зале' },
       ],
       correctId: 'beach',
       hint: 'Подсказка: это было рядом с водой.',
       successMessage: 'В том воспоминании самое прекрасное — ты.',
+      successImage: { src: beachImage, alt: 'Настя на том самом пляже', width: 1080, height: 1336 },
     },
     {
       id: 'first-flowers',
@@ -32,18 +36,20 @@ const beginningTask: QuizTaskDefinition = {
       correctId: 'march-28',
       hint: 'Это было весной 2024-го, ближе к концу марта.',
       successMessage: 'Тот самый мартовский букет. А впереди ещё столько поводов дарить тебе цветы.',
+      successImage: { src: bouquetImage, alt: 'Букет, который я подарил тебе впервые', width: 768, height: 1024 },
     },
     {
       id: 'first-date',
       question: 'Когда мы впервые пошли на свидание?',
       options: [
-        { id: 'february-14', label: '14 февраля 2025' },
         { id: 'february-16', label: '16 февраля 2025' },
+        { id: 'february-14', label: '14 февраля 2025' },
         { id: 'february-20', label: '20 февраля 2025' },
       ],
       correctId: 'february-16',
       hint: 'В феврале 2025-го, через два дня после Дня всех влюблённых.',
       successMessage: '16 февраля — наше первое свидание. Как же хорошо, что у нас есть этот день.',
+      successImage: { src: cafeImage, alt: 'Кафе нашего первого свидания', width: 1080, height: 710 },
     },
     {
       id: 'song',
@@ -60,7 +66,7 @@ const beginningTask: QuizTaskDefinition = {
   ],
 };
 
-// Draft copy and illustrations, not personal photos, belongings or proposal quotes.
+// Beginning uses owner-supplied photos; remaining copy/art still need personal review.
 export const gameContent = {
   revision: 2,
   status: 'draft',

@@ -1,5 +1,30 @@
 # Implementation ledger — plan: docs/superpowers/plans/2026-11-10-romantic-gift-game-implementation.md
 
+## Stage 6 / Beginning — technically complete, awaiting owner review
+
+- Owner supplied beach, bouquet and cafe images; specified answer edits, success-photo slides and a left-to-right KitKat flight before the key. Clarified heart expands to reveal an ordinary question dialog.
+- Scope: docs/superpowers/specs/2026-11-11-beginning-memories-design.md; execute the existing authorized plan inline in the current checkout. No Git operations, dependencies or other pouches/finale redesign.
+- Pre-flight: QuizDraft already persists confirmed answers; complete-pouch saves synchronously and idempotently. Keep transient celebration in PouchScene so persistence never waits for animation.
+- Ruling: preserve revision 2 and the existing distractor ID friends with its new display label «В зале» — correct answers/question order remain compatible; avoids discarding owner progress. Cost: the historical internal ID no longer describes its display label.
+- Ruling: success photos replace choices within the existing dialog, rather than adding nested dialogs — matches the requested slides and keeps a single focus/scroll owner. Cost: answers are visible again only on a fresh playthrough.
+- Implementation choices: 3-second flight, optional existing sound provider, immediate reduced-motion reveal; personal photos fitted whole, bouquet cutout includes wrapper and ribbon. Other content remains draft.
+- RED: first content/component run 7 failed / 5 passed for old distractor/order, absent photos and unreplaced choices; GREEN 12/12 after optional successImage and memory presentation. Logs /private/tmp/gift-beginning-memories-{red,green}.log.
+- Animation RED: 3 browser failures on missing flight and ordinary panel animation, /private/tmp/gift-beginning-animation-red.log. Heart mask/reveal, gesture-only optional paper sound and transient full-viewport flight now implemented; WebKit 7/7 at the first checkpoint.
+- Visual inspection found layout growth after photo decode: aspect-ratio:auto removed the intrinsic placeholder, initially leaving zero height. A held-response E2E reproduced 0→413px (RED /private/tmp/gift-beginning-layout-red.log). Explicit source dimensions/aspect ratio now reserve the photo region; targeted GREEN /private/tmp/gift-beginning-layout-green.log.
+- Final unit suite 125/125 in 12 files; full E2E 157 passed + 2 expected CDP-only skips in all three projects, including typecheck/build. Logs /private/tmp/gift-beginning-final-unit.log, /private/tmp/gift-beginning-full-e2e.log. git diff --check passed.
+- WebKit screenshots inspected: /private/tmp/gift-beginning-{heart,flight,narrow}.png and /private/tmp/gift-beginning-{beach,bouquet,cafe}-final.png. Whole photos, text above, Next below, no horizontal dialog overflow; desktop/mobile interactions and failed media exercised by E2E. Device chrome/physical iPhone/Yandex/audio quality remain owner checks.
+- Concurrent unrelated chest work was committed as 5251af8 while this task ran. This task never changed RotatingChest.tsx/rotating-chest.css; final review is the current uncommitted Beginning diff against that HEAD. No commit/push/deployment by this executor.
+- Independent fresh read-only final reviewer found no Critical/Important/Minor issues. Reviewed diff against 5251af8, new files, screenshots and green logs; ran diff check only, did not repeat suites or mutate the checkout. No fix pass needed. Review package /private/tmp/gift-beginning-review.md.
+- Final: Ruling: other pouches and full stage 6 remain outside this checkpoint because the owner chose sequential personalization — cost: those materials and final readiness are still pending.
+- Final: Ruling: deferred finale redesign/gifts remain separate, and final letter/voice/other draft content await their own checkpoint — cost: this is not a finished gift-release build.
+- Final: minor (previously deferred): second-bottom paper effect may be cancelled by LetterScene unmount. Outside Beginning diff and retained for the authorized future sound/finale rework.
+- Final: Ruling: no visual hover/focus effects per owner; focus restoration remains functional — cost: no visible keyboard ring.
+- Final: Ruling: completed Beginning reopens its key, not a new memory-gallery mode; no automatic progress reset — cost: manually replaying new photos requires the existing confirmed whole-game restart.
+- Final: Ruling: exact bouquet cutout likeness and final personal copy approval belong to owner review; source/edit provenance is disclosed — cost: generative cutout may need adjustment after visual feedback.
+- Final: Ruling: physical iPhone/Yandex/native chrome/VoiceOver/acoustics remain manual acceptance, not an automation claim — cost: real device appearance/sound still need checking.
+- Final: Ruling: unrelated chest changes already committed in 5251af8 are excluded from this review — cost: this checkpoint judges only the Beginning change. No commit, push or deployment by this executor.
+- Task 6.Beginning complete: 125/125 unit, 157 E2E passed + 2 expected skips, typecheck/build and diff/text/link/metadata checks green. Stage 6 overall remains incomplete; stop here for owner manual review before the next pouch.
+
 ## Owner refinement — Bueno behind flowers on the table
 
 - Owner requested moving white Bueno from the Beginning pouch to the main scene behind flowers. Same secret ID/note/save; no content revision or progress reset.

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { gameContent } from '../game/content';
@@ -42,7 +42,7 @@ describe('QuizTask', () => {
     expect(screen.getByRole('status')).toBeEmptyDOMElement();
     await user.click(screen.getByRole('button', { name: 'Проверить ответ' }));
     expect(screen.getByRole('status')).toHaveTextContent(gameContent.pouches.beginning.task.questions[0].successMessage);
-    expect(screen.getByRole('radio', { name: 'На пляже' })).toBeDisabled();
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
     expect(screen.queryByText('Ключ найден')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Дальше' }));
     expect(screen.getByText('Воспоминание 2 из 4')).toBeVisible();
@@ -72,6 +72,43 @@ describe('QuizTask', () => {
     expect(screen.getByRole('status')).toBeEmptyDOMElement();
     expect(screen.queryByRole('button', { name: 'Дальше' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Проверить ответ' })).toBeEnabled();
+  });
+
+  it.each([
+    ['first-meeting', 'beach', 'Настя на том самом пляже'],
+    ['first-flowers', 'march-28', 'Букет, который я подарил тебе впервые'],
+    ['first-date', 'february-16', 'Кафе нашего первого свидания'],
+  ])('reveals the %s photo between the reply and Next only after checking the right answer', async (questionId, selectedId, alt) => {
+    const user = userEvent.setup();
+    render(<QuizHarness initialDraft={{ kind: 'quiz', questionId, selectedId, confirmed: false }} />);
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Проверить ответ' }));
+    const photo = screen.getByRole('img', { name: alt });
+    const reply = screen.getByRole('status');
+    const next = screen.getByRole('button', { name: 'Дальше' });
+    expect(reply.compareDocumentPosition(photo) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(photo.compareDocumentPosition(next) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
+    expect(screen.queryByText('Ключ найден')).not.toBeInTheDocument();
+  });
+
+  it('does not reveal a photo for a wrong answer and keeps retry available', async () => {
+    const user = userEvent.setup();
+    render(<QuizHarness initialDraft={{ kind: 'quiz', questionId: 'first-meeting', selectedId: 'cafe', confirmed: false }} />);
+    await user.click(screen.getByRole('button', { name: 'Проверить ответ' }));
+    expect(screen.getByRole('status')).toHaveTextContent('Подсказка');
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'На пляже' })).toBeEnabled();
+  });
+
+  it('restores the confirmed bouquet and still advances if the photograph fails', async () => {
+    const user = userEvent.setup();
+    render(<QuizHarness initialDraft={{ kind: 'quiz', questionId: 'first-flowers', selectedId: 'march-28', confirmed: true }} />);
+    fireEvent.error(screen.getByRole('img', { name: 'Букет, который я подарил тебе впервые' }));
+    expect(screen.getByRole('img', { name: 'Букет, который я подарил тебе впервые' })).toHaveTextContent('Иллюстрация недоступна');
+    await user.click(screen.getByRole('button', { name: 'Дальше' }));
+    expect(screen.getByText('Воспоминание 3 из 4')).toBeVisible();
+    expect(screen.getByRole('radio', { name: '16 февраля 2025' })).toBeEnabled();
   });
 
   it('restores confirmed feedback and advances once without carrying the old selection or hint', async () => {

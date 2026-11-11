@@ -47,7 +47,7 @@ test('restores confirmed feedback before Next and keeps the key locked until the
   await page.reload();
   await expect(page.getByText('Воспоминание 2 из 4', { exact: true })).toBeVisible();
   await expect(page.getByRole('dialog').getByRole('status')).toContainText('мартовский букет');
-  await expect(page.getByRole('radio', { name: '28 марта 2024', exact: true })).toBeDisabled();
+  await expect(page.getByRole('radio')).toHaveCount(0);
   await page.getByRole('button', { name: 'Дальше', exact: true }).click();
   const question = page.getByText('Когда мы впервые пошли на свидание?', { exact: true });
   await expect(question).toBeFocused();

@@ -183,6 +183,14 @@
 }
 
 .scene-panel[open] { animation: panel-arrive .3s ease-out; }
+.scene-panel--heart[open] {
+  --heart-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 88C39 78 9 57 9 34C9 10 38 6 50 26C62 6 91 10 91 34C91 57 61 78 50 88Z'/%3E%3C/svg%3E");
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: panel-heart-arrive .7s ease-in-out;
+}
 .scene-panel::backdrop { background: #422c4866; backdrop-filter: blur(5px); }
 .scene-panel__top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 0; }
 .back-button { display: inline-flex; min-width: 0; min-height: 44px; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #d3afbd; border-radius: 999px; background: #fff1e9b3; font-size: .875rem; }
@@ -198,6 +206,10 @@
 .pouch-preview__art--task { width: min(60%, 180px); margin-block: 14px 4px; }
 .pouch-preview__description { max-width: 330px; margin: 12px auto 0; font-size: 1rem; line-height: 1.85; text-wrap: pretty; }
 .pouch-preview__ornament { margin-top: 20px; color: #ac7293; font-size: 1.25rem; }
+.pouch-reward__title:focus { outline: none; }
+.kitkat-flight { min-height: 220px; padding-top: 28px; }
+.kitkat-flight__stage { position: fixed; z-index: 3; inset: 0; overflow: hidden; pointer-events: none; }
+.kitkat-flight__bar { position: absolute; top: 44%; left: 0; width: min(64vw, 340px); animation-name: kitkat-fly; animation-timing-function: ease-in-out; animation-fill-mode: both; }
 
 .game-menu-button { min-height: 44px; margin-top: 14px; padding: 8px 16px; border: 0; border-radius: 999px; background: #fff0e638; color: #72455f; font-size: .75rem; line-height: 1.5; }
 .game-menu-content { margin-top: 20px; text-align: left; font-size: .9375rem; line-height: 1.8; overflow-wrap: anywhere; }
@@ -216,6 +228,31 @@
 @keyframes panel-arrive {
   from { opacity: 0; translate: 0 12px; }
   to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes panel-heart-arrive {
+  0% {
+    -webkit-mask-image: var(--heart-mask);
+    mask-image: var(--heart-mask);
+    -webkit-mask-size: 28px 28px;
+    mask-size: 28px 28px;
+  }
+  35% {
+    -webkit-mask-size: 160px 160px;
+    mask-size: 160px 160px;
+  }
+  100% {
+    -webkit-mask-image: var(--heart-mask);
+    mask-image: var(--heart-mask);
+    -webkit-mask-size: 250vmax 250vmax;
+    mask-size: 250vmax 250vmax;
+  }
+}
+
+@keyframes kitkat-fly {
+  0% { transform: translateX(-110%) rotate(-8deg); }
+  50% { transform: translateX(calc(50vw - 50%)) translateY(-24px) rotate(8deg); }
+  100% { transform: translateX(100vw) rotate(-8deg); }
 }
 
 @media (min-width: 600px) {

@@ -12,6 +12,9 @@
 .quiz-choice--selected .quiz-choice__heart { color: var(--berry); }
 .quiz-task fieldset:disabled .quiz-choice { cursor: default; }
 .quiz-task__feedback-empty { margin: 0; }
+.quiz-memory { outline: none; }
+.quiz-memory__picture { margin-top: 20px; padding: 8px; border: 1px solid #d8b8c6; border-radius: 16px 4px 16px 4px; background: #fff5ea80; box-shadow: 0 6px 20px #713f6415; }
+.quiz-memory__picture .task-image { width: 100%; height: auto; max-height: 52svh; aspect-ratio: auto; object-fit: contain; border-radius: 8px 2px 8px 2px; }
 .task-success { margin: 16px 0 0; color: #793b59; font-family: var(--handwriting); font-size: 1.5rem; line-height: 1.4; text-align: center; overflow-wrap: anywhere; }
 .task-hint { margin: 16px 0 0; padding: 12px 14px; border-left: 2px solid #bd8b9e; color: #70435c; font-size: .875rem; line-height: 1.75; }
 .story-button { display: block; width: 100%; min-height: 48px; margin-top: 22px; padding: 13px 18px; border: 1px solid #8d3153; border-radius: 999px; background: #9c365c; color: #fff5ec; font-size: .9375rem; line-height: 1.5; overflow-wrap: anywhere; }

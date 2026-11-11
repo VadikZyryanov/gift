@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyOrnament } from '../components/KeyOrnament';
 import { ScenePanel } from '../components/ScenePanel';
 import { StorageNotice } from '../components/StorageNotice';
@@ -12,6 +12,7 @@ import { QuizTask } from '../tasks/QuizTask';
 import { pouchImages } from './assets';
 import { SecretSpot } from '../secrets/SecretSpot';
 import { secretImages } from '../secrets/assets';
+import { KitKatFlight } from './KitKatFlight';
 
 interface PouchSceneProps {
   pouchId: PouchId;
@@ -21,7 +22,10 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
   const { progress, send } = useGame();
   const completed = progress.completedPouches.includes(pouchId);
   const [wasCompletedOnOpen] = useState(completed);
-  const showReward = completed;
+  const [celebrating, setCelebrating] = useState(false);
+  const finishCelebration = useCallback(() => setCelebrating(false), []);
+  const rewardRef = useRef<HTMLParagraphElement>(null);
+  const showReward = completed && !celebrating;
   const newReward = showReward && !wasCompletedOnOpen;
   const draft = progress.drafts[pouchId];
   const onBack = () => send({ type: 'navigate', scene: { kind: 'table' } });
@@ -29,8 +33,17 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
   const task = pouch.task;
   const callbacks = {
     onDraftChange: (nextDraft: TaskDraft) => send({ type: 'save-draft', pouchId, draft: nextDraft }),
-    onSolved: () => send({ type: 'complete-pouch', pouchId }),
+    onSolved: () => {
+      if (pouchId === 'beginning') setCelebrating(true);
+      send({ type: 'complete-pouch', pouchId });
+    },
   };
+
+  useEffect(() => {
+    if (!newReward) return;
+    rewardRef.current?.focus({ preventScroll: true });
+    rewardRef.current?.scrollIntoView?.({ block: 'nearest' });
+  }, [newReward]);
 
   function renderTask() {
     switch (task.kind) {
@@ -41,7 +54,7 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
     }
   }
   return (
-    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`}>
+    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`} entrance={pouchId === 'beginning' ? 'heart' : undefined}>
       <StorageNotice />
       <p className="pouch-preview__subtitle">{pouch.subtitle}</p>
       <div className={`pouch-preview__art pouch-preview__art--${pouchId} pouch-preview__art--task${newReward ? ' pouch-preview__art--opening' : ''}`}>
@@ -53,10 +66,12 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
       {showReward ? (
         <section className={`pouch-reward${newReward ? ' pouch-reward--new' : ''}`} aria-label="Записка и найденный ключ" aria-live="polite">
           <span className="pouch-reward__key" aria-hidden="true"><KeyOrnament /></span>
-          <p className="pouch-reward__title">Ключ найден</p>
+          <p className="pouch-reward__title" ref={rewardRef} tabIndex={-1}>Ключ найден</p>
           <p className="pouch-reward__note">{pouch.rewardNote}</p>
           <button className="story-button" type="button" onClick={onBack}>Вернуться на стол</button>
         </section>
+      ) : celebrating && task.kind === 'quiz' ? (
+        <KitKatFlight message={task.questions[task.questions.length - 1].successMessage} onComplete={finishCelebration} />
       ) : renderTask()}
     </ScenePanel>
   );

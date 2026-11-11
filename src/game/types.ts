@@ -47,6 +47,7 @@ export interface QuizQuestion {
   correctId: string;
   hint: string;
   successMessage: string;
+  successImage?: TaskImageSource;
 }
 
 export interface QuizTaskDefinition {
@@ -57,6 +58,8 @@ export interface QuizTaskDefinition {
 export interface TaskImageSource {
   src: string;
   alt: string;
+  width?: number;
+  height?: number;
 }
 
 export interface PhotoTaskDefinition {
