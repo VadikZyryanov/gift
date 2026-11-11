@@ -1,14 +1,14 @@
-.chest-orbit { position: relative; width: 72%; max-width: 334px; aspect-ratio: 1.65; margin: 4px auto 0; perspective: 900px; touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; }
+.chest-orbit { --chest-depth: clamp(24px, 8vw, 36px); position: relative; width: 72%; max-width: 334px; aspect-ratio: 1.65; margin: 4px auto 0; perspective: 900px; touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; }
 .chest-orbit__turntable { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .45s cubic-bezier(.2,.7,.2,1); }
 .chest-orbit--dragging .chest-orbit__turntable { transition: none; }
 .chest-orbit .chest { width: 100%; max-width: none; margin: 0; cursor: grab; }
 .chest-orbit__face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .chest-orbit__face[aria-hidden='true'] { visibility: hidden; }
-.chest-orbit__front { transform: translateZ(20px); }
-.chest-orbit__back { transform: rotateY(180deg) translateZ(20px); }
-.chest-orbit__rear-image { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 7px 8px #773b5a30); }
-.chest-orbit__side { position: absolute; top: 8%; bottom: 9%; width: 40px; border: 4px solid #ba8546; border-radius: 45% 45% 8% 8%; background: repeating-linear-gradient(0deg, #8f3452, #6b2b44 3px, #963e59 6px); backface-visibility: hidden; pointer-events: none; }
-.chest-orbit__side--left { left: -2px; transform: rotateY(-90deg); }
-.chest-orbit__side--right { right: -2px; transform: rotateY(90deg); }
+.chest-orbit__front { transform: translateZ(calc(var(--chest-depth) / 2)); }
+.chest-orbit__back { transform: rotateY(180deg) translateZ(calc(var(--chest-depth) / 2)); }
+.chest-orbit .chest__art { height: 100%; }
+.chest-orbit .chest img { height: 100%; aspect-ratio: auto; object-fit: fill; }
+.chest-orbit__rear-image { display: block; width: 100%; height: 98%; object-fit: fill; pointer-events: none; filter: drop-shadow(0 7px 8px #773b5a30); }
+.chest-orbit__surface { position: absolute; height: var(--chest-depth); transform-origin: 0 0; background: linear-gradient(90deg, #54253a40, transparent 30%, #bf738b22 65%, #54253a40), repeating-linear-gradient(0deg, #87334f, #793047 3px, #8e3b55 6px); box-shadow: inset 0 1px #ba8546, inset 0 -1px #ba8546; backface-visibility: hidden; -webkit-backface-visibility: hidden; pointer-events: none; }
 .chest-orbit button { touch-action: pan-y pinch-zoom; }
 .chest-orbit__instructions { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

@@ -17,6 +17,26 @@ interface Gesture {
   axis: 'pending' | 'horizontal' | 'vertical';
 }
 
+// Percentages follow the opaque artwork, rather than the transparent image bounds.
+const chestOutline = [
+  [15, 8], [85, 8], [88, 10.5], [90.5, 15], [92.5, 22.5],
+  [94.2, 32], [95.3, 42], [94, 49], [94, 91], [93, 93],
+  [7, 93], [5.8, 91], [5.8, 49], [4.7, 42], [5.8, 32],
+  [7.5, 22.5], [9.5, 15], [12, 10.5],
+] as const;
+
+const chestSurfaces = chestOutline.map(([x, y], index) => {
+  const [nextX, nextY] = chestOutline[(index + 1) % chestOutline.length];
+  const dx = nextX - x;
+  const dy = (nextY - y) / 1.65;
+  return {
+    left: `${x}%`,
+    top: `${y}%`,
+    width: `calc(${Math.hypot(dx, dy)}% + .75px)`,
+    transform: `translateZ(calc(var(--chest-depth) / -2)) rotateZ(${Math.atan2(dy, dx) * 180 / Math.PI}deg) rotateX(90deg)`,
+  };
+});
+
 export function RotatingChest({ onPress, artRef, rearContent }: RotatingChestProps) {
   const groupRef = useRef<HTMLDivElement>(null);
   const angleRef = useRef(0);
@@ -89,7 +109,10 @@ export function RotatingChest({ onPress, artRef, rearContent }: RotatingChestPro
     onPointerUp={event => { if (event.pointerId === gestureRef.current?.pointerId) finishGesture(false); }}
     onPointerCancel={event => { if (event.pointerId === gestureRef.current?.pointerId) finishGesture(true); }}
     onPointerLeave={() => { if (gestureRef.current?.axis !== 'horizontal') finishGesture(true); }}
-    onLostPointerCapture={() => finishGesture(true)}
+    onLostPointerCapture={event => {
+      // Touch capture moves from the child to this group; ignore the child's bubbling loss.
+      if (event.target === event.currentTarget && event.pointerId === gestureRef.current?.pointerId) finishGesture(true);
+    }}
     onClickCapture={event => {
       if (suppressClickRef.current) { event.preventDefault(); event.stopPropagation(); }
     }}
@@ -113,8 +136,7 @@ export function RotatingChest({ onPress, artRef, rearContent }: RotatingChestPro
         <img className="chest-orbit__rear-image" src={chestBack} alt="" width="840" height="480" draggable="false" />
         {rearContent}
       </div>
-      <span className="chest-orbit__side chest-orbit__side--left" aria-hidden="true" />
-      <span className="chest-orbit__side chest-orbit__side--right" aria-hidden="true" />
+      {chestSurfaces.map((style, index) => <span key={index} className="chest-orbit__surface" style={style} aria-hidden="true" />)}
     </div>
     <span id="chest-turn-instructions" className="chest-orbit__instructions">Чтобы осмотреть сундук, проведи по нему влево или вправо. С клавиатуры используй стрелки влево и вправо.</span>
   </div>;
