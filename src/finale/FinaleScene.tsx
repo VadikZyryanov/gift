@@ -1,18 +1,22 @@
-import { ScenePanel } from '../components/ScenePanel';
+import { FinaleLayout } from './FinaleLayout';
 import { StorageNotice } from '../components/StorageNotice';
 import { useGame } from '../game/GameProvider';
 import { gameContent } from '../game/content';
 import { secretIds } from '../game/types';
+import { GiftSelection } from './GiftSelection';
+import { useAudio } from '../audio/AudioProvider';
 
 export function FinaleScene() {
   const { progress, send } = useGame();
+  const { stopEffects } = useAudio();
   const found = secretIds.filter(id => progress.foundSecrets.includes(id));
-  const onBack = () => send({ type: 'navigate', scene: { kind: 'table' } });
-  return <ScenePanel title="У этой истории есть продолжение" onBack={onBack} returnFocusId="treasure-chest">
+  const onBack = () => {
+    stopEffects();
+    send({ type: 'navigate', scene: { kind: 'table' } });
+  };
+  return <FinaleLayout title="У этой истории есть продолжение" onBack={onBack}>
     <StorageNotice />
-    <div className="finale-keepsake" aria-hidden="true"><span>♡</span></div>
-    <p className="finale-handwriting">Самый любимый человек — ты.</p>
-    <p className="finale-copy">Все четыре маленькие истории уже здесь. А к письму можно возвращаться столько, сколько захочется.</p>
+    <GiftSelection />
     <section className="secret-results" aria-label="Найденные маленькие тайны">
       <p className="secret-results__count" role="status">Маленькие тайны: {found.length} из {secretIds.length}</p>
       <div className="secret-results__collection">
@@ -27,8 +31,7 @@ export function FinaleScene() {
         <h3>Ещё кое-что для тебя</h3><p>{gameContent.bonusMessage}</p>
       </article> : <p className="secret-results__invitation">Кажется, среди наших вещей спряталось ещё кое-что. Можно вернуться и присмотреться.</p>}
     </section>
-    <p className="content-draft">Здесь появится твой подарочный лист. Его мы составим отдельно, когда вся история будет готова.</p>
     <button className="story-button" type="button" onClick={() => send({ type: 'open-letter' })}>Перечитать письмо</button>
     <button className="story-button story-button--quiet" type="button" onClick={onBack}>Вернуться на стол</button>
-  </ScenePanel>;
+  </FinaleLayout>;
 }

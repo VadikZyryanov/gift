@@ -13,7 +13,7 @@ export function GameMenu({ onClose }: { onClose: () => void }) {
       {confirming ? (
         <div className="game-menu-content">
           <p>Начать нашу маленькую историю заново?</p>
-          <p>Все ключи и ответы будут сброшены. Можно просто продолжить с того места, где ты остановилась.</p>
+          <p>Все ключи, ответы, тайны и выбор подарков будут сброшены. Можно просто продолжить с того места, где ты остановилась.</p>
           <button className="story-button story-button--quiet" type="button" onClick={onClose}>Продолжить игру</button>
           <button className="story-button" type="button" onClick={() => {
             send({ type: 'restart' });

@@ -2,7 +2,7 @@ import { pouchIds, type GameEvent, type GameProgress, type Scene } from './types
 
 export function createInitialProgress(contentRevision: number): GameProgress {
   return {
-    schemaVersion: 1, contentRevision, completedPouches: [], foundSecrets: [], drafts: {},
+    schemaVersion: 1, contentRevision, completedPouches: [], foundSecrets: [], selectedGiftIds: [], drafts: {},
     chestOpened: false, letterOpened: false, secondBottomOpened: false, scene: { kind: 'table' },
   };
 }
@@ -36,11 +36,19 @@ export function gameReducer(progress: GameProgress, event: GameEvent): GameProgr
     case 'find-secret':
       return progress.foundSecrets.includes(event.secretId)
         ? progress : { ...progress, foundSecrets: [...progress.foundSecrets, event.secretId] };
+    case 'toggle-gift': {
+      if (!progress.letterOpened) return progress;
+      const selectedGiftIds = progress.selectedGiftIds ?? [];
+      return { ...progress, selectedGiftIds: selectedGiftIds.includes(event.giftId)
+        ? selectedGiftIds.filter(id => id !== event.giftId)
+        : [...selectedGiftIds, event.giftId] };
+    }
     case 'open-chest':
       return canOpenChest(progress) ? { ...progress, chestOpened: true, scene: { kind: 'chest' } } : progress;
     case 'open-letter':
       return progress.chestOpened ? { ...progress, letterOpened: true, scene: { kind: 'letter' } } : progress;
-    case 'open-second-bottom':
+    case 'show-finale':
+    case 'open-second-bottom': // Legacy event and persisted flag remain compatible with existing saves.
       return progress.letterOpened ? { ...progress, secondBottomOpened: true, scene: { kind: 'finale' } } : progress;
     case 'restart':
       return createInitialProgress(progress.contentRevision);

@@ -7,6 +7,7 @@ interface AudioSession {
   playEffect: (name: EffectName) => void;
   registerVoice: (audio: HTMLAudioElement | null) => void;
   stopVoice: () => void;
+  stopEffects: () => void;
 }
 
 const AudioContextValue = createContext<AudioSession | null>(null);
@@ -27,8 +28,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
 
   const stopVoice = useCallback(() => {
     voiceRef.current?.pause();
-    stopEffects();
-  }, [stopEffects]);
+  }, []);
 
   const onVoicePlay = useCallback(() => {
     stopEffects();
@@ -40,10 +40,9 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     if (previous === audio) return;
     previous?.removeEventListener('play', onVoicePlay);
     previous?.pause();
-    stopEffects();
     voiceRef.current = audio;
     audio?.addEventListener('play', onVoicePlay);
-  }, [onVoicePlay, stopEffects]);
+  }, [onVoicePlay]);
 
   function getContext(): AudioContext | null {
     try {
@@ -79,6 +78,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stop = () => {
       stopVoice();
+      stopEffects();
       void contextRef.current?.suspend().catch(() => {});
     };
     const onVisibility = () => { if (document.visibilityState === 'hidden') stop(); };
@@ -88,13 +88,14 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('pagehide', stop);
       stopVoice();
+      stopEffects();
       const context = contextRef.current;
       contextRef.current = null;
       void context?.close().catch(() => {});
     };
-  }, [stopVoice]);
+  }, [stopVoice, stopEffects]);
 
-  return <AudioContextValue value={{ effectsEnabled, setEffectsEnabled, playEffect, registerVoice, stopVoice }}>{children}</AudioContextValue>;
+  return <AudioContextValue value={{ effectsEnabled, setEffectsEnabled, playEffect, registerVoice, stopVoice, stopEffects }}>{children}</AudioContextValue>;
 }
 
 export function useAudio(): AudioSession {

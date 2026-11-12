@@ -4,6 +4,7 @@ import { ScenePanel } from '../components/ScenePanel';
 import { StorageNotice } from '../components/StorageNotice';
 import { gameContent } from '../game/content';
 import { useGame } from '../game/GameProvider';
+import { canOpenChest } from '../game/progress';
 import type { PouchId, TaskDraft } from '../game/types';
 import { FamilyTask } from '../tasks/FamilyTask';
 import { FamilyPicture, FamilyTimeline } from '../tasks/FamilyPicture';
@@ -17,9 +18,10 @@ import { KitKatFlight } from './KitKatFlight';
 
 interface PouchSceneProps {
   pouchId: PouchId;
+  onBack: () => void;
 }
 
-export function PouchScene({ pouchId }: PouchSceneProps) {
+export function PouchScene({ pouchId, onBack }: PouchSceneProps) {
   const { progress, send } = useGame();
   const completed = progress.completedPouches.includes(pouchId);
   const [wasCompletedOnOpen] = useState(completed);
@@ -29,7 +31,6 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
   const showReward = completed && !celebrating;
   const newReward = showReward && !wasCompletedOnOpen;
   const draft = progress.drafts[pouchId];
-  const onBack = () => send({ type: 'navigate', scene: { kind: 'table' } });
   const pouch = gameContent.pouches[pouchId];
   const task = pouch.task;
   const callbacks = {
@@ -82,7 +83,7 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
               {gameContent.proposalLetter.stanzas.map(stanza => <p className="proposal-letter__stanza" key={stanza}>{stanza}</p>)}
             </div>
           </article>}
-          <button className="story-button" type="button" onClick={onBack}>Вернуться на стол</button>
+          <button className="story-button" type="button" onClick={onBack}>{canOpenChest(progress) && !progress.chestOpened ? 'К сундуку' : 'Вернуться на стол'}</button>
         </section>
       ) : celebrating && task.kind === 'quiz' ? (
         <KitKatFlight message={task.questions[task.questions.length - 1].successMessage} onComplete={finishCelebration} />

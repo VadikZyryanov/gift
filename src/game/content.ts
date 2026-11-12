@@ -5,7 +5,7 @@ import bouquetImage from '../assets/content/beginning-bouquet.webp';
 import cafeImage from '../assets/content/beginning-cafe.webp';
 import proposalImage from '../assets/content/proposal-evening.webp';
 import { secretImages } from '../secrets/assets';
-import type { LetterContent, PouchContent, PouchId, QuizTaskDefinition, SecretContent, SecretId } from './types';
+import type { GiftContent, LetterContent, PouchContent, PouchId, QuizTaskDefinition, SecretContent, SecretId } from './types';
 
 // Facts and order confirmed by the owner; hints, distractors and replies are draft copy.
 const beginningTask: QuizTaskDefinition = {
@@ -101,6 +101,15 @@ export const gameContent = {
       'А кстати помнишь? бабушка что мимо проходила дала совет\nЧтоб вместе так и было до 80 лет\nИ я подумал почему б и нет?',
       'и вот перед тобою я стою\nв твои глаза зеленые глядя\nхочу сказать, что я тебя люблю,\nи спросить, ты выйдешь за меня?',
     ],
+  },
+  gifts: {
+    status: 'draft',
+    items: [
+      { id: 'spa', title: 'День для себя', description: 'Отдых, тишина и забота о себе. Немного времени, которое принадлежит только тебе.' },
+      { id: 'dinner', title: 'Ужин вдвоём', description: 'Выбрать уютное место и провести вечер вместе, без спешки.' },
+      { id: 'experience', title: 'Новое впечатление', description: 'Попробовать что-нибудь новое и сохранить ещё одно тёплое воспоминание.' },
+      { id: 'surprise', title: 'Маленький сюрприз', description: 'Оставить одну радость секретом — до самого момента вручения.' },
+    ] satisfies readonly GiftContent[],
   },
   letter: {
     status: 'draft',

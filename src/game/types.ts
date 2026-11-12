@@ -19,6 +19,15 @@ export interface PouchPreview {
 export const secretIds = ['green-dress', 'white-bueno', 'black-g-class'] as const;
 export type SecretId = (typeof secretIds)[number];
 
+export const giftIds = ['spa', 'dinner', 'experience', 'surprise'] as const;
+export type GiftId = (typeof giftIds)[number];
+
+export interface GiftContent {
+  id: GiftId;
+  title: string;
+  description: string;
+}
+
 export interface SecretContent {
   title: string;
   text: string;
@@ -152,6 +161,8 @@ export interface GameProgress {
   contentRevision: number;
   completedPouches: PouchId[];
   foundSecrets: SecretId[];
+  // Optional in legacy schema-v1 snapshots; storage normalizes it to an empty list.
+  selectedGiftIds?: GiftId[];
   drafts: Partial<Record<PouchId, TaskDraft>>;
   chestOpened: boolean;
   letterOpened: boolean;
@@ -164,7 +175,8 @@ export type GameEvent =
   | { type: 'save-draft'; pouchId: PouchId; draft: TaskDraft }
   | { type: 'complete-pouch'; pouchId: PouchId }
   | { type: 'find-secret'; secretId: SecretId }
-  | { type: 'open-chest' | 'open-letter' | 'open-second-bottom' }
+  | { type: 'toggle-gift'; giftId: GiftId }
+  | { type: 'open-chest' | 'open-letter' | 'show-finale' | 'open-second-bottom' }
   | { type: 'restart' };
 
 export interface GameSession {

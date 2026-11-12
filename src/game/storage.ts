@@ -1,6 +1,6 @@
 import { gameContent } from './content';
 import { canOpenChest, createInitialProgress, isSceneAllowed } from './progress';
-import { pouchIds, secretIds, type GameProgress, type GameSession, type PouchId, type Scene, type SecretId, type TaskDefinition, type TaskDraft } from './types';
+import { giftIds, pouchIds, secretIds, type GameProgress, type GameSession, type GiftId, type PouchId, type Scene, type SecretId, type TaskDefinition, type TaskDraft } from './types';
 
 const storageKey = 'gift:progress:v1';
 
@@ -80,6 +80,8 @@ function parseProgress(value: unknown, contentRevision: number): GameProgress | 
   if (!Array.isArray(value.foundSecrets) || !value.foundSecrets.every((id: unknown) =>
     isSecretId(id) || (typeof id === 'string' && legacySecretIds.includes(id)))) return null;
   if (typeof value.chestOpened !== 'boolean' || typeof value.letterOpened !== 'boolean' || typeof value.secondBottomOpened !== 'boolean') return null;
+  const savedGifts = value.selectedGiftIds ?? [];
+  if (!Array.isArray(savedGifts) || !savedGifts.every((id: unknown) => typeof id === 'string')) return null;
   const scene = parseScene(value.scene);
   if (!scene || !isRecord(value.drafts)) return null;
   const drafts: GameProgress['drafts'] = {};
@@ -92,6 +94,7 @@ function parseProgress(value: unknown, contentRevision: number): GameProgress | 
   const progress: GameProgress = {
     schemaVersion: 1, contentRevision,
     completedPouches: [...new Set(value.completedPouches)], foundSecrets: [...new Set(value.foundSecrets.filter(isSecretId))],
+    selectedGiftIds: [...new Set(savedGifts.filter((id: unknown): id is GiftId => giftIds.some(giftId => giftId === id)))],
     drafts, chestOpened: value.chestOpened, letterOpened: value.letterOpened,
     secondBottomOpened: value.secondBottomOpened, scene,
   };

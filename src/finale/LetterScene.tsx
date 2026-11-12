@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAudio } from '../audio/AudioProvider';
-import { ScenePanel } from '../components/ScenePanel';
+import { FinaleLayout } from './FinaleLayout';
 import { StorageNotice } from '../components/StorageNotice';
 import { gameContent } from '../game/content';
 import { useGame } from '../game/GameProvider';
@@ -10,7 +10,7 @@ type VoiceState = 'idle' | 'loading' | 'playing' | 'paused' | 'error';
 
 export function LetterScene({ letter = gameContent.letter }: { letter?: LetterContent }) {
   const { send } = useGame();
-  const { registerVoice, stopVoice, playEffect } = useAudio();
+  const { registerVoice, stopVoice, stopEffects, playEffect } = useAudio();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const requestRef = useRef(0);
   const [voiceState, setVoiceState] = useState<VoiceState>('idle');
@@ -61,10 +61,11 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
     }
   }
 
-  return <ScenePanel title="Для моей булочки" onBack={() => {
+  return <FinaleLayout title="Для моей булочки" className="letter-page" onBack={() => {
     stopVoice();
+    stopEffects();
     send({ type: 'navigate', scene: { kind: 'table' } });
-  }} returnFocusId="treasure-chest">
+  }}>
     <StorageNotice />
     {letter.status === 'draft' && <p className="content-draft">Черновик письма — окончательные слова ещё впереди.</p>}
     <article className="love-letter" aria-label="Письмо для тебя">
@@ -82,14 +83,14 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
       </button>
       <p className="voice-message__status" role="status">{voiceState === 'error' ? 'Запись пока не удалось включить. Письмо можно прочитать, а голос попробовать ещё раз.' : voiceState === 'loading' ? 'Открываю послание…' : voiceState === 'playing' ? 'Послание звучит. Можно поставить на паузу.' : 'Голос включается только по твоему нажатию.'}</p>
     </section>}
-    <section className="second-bottom" aria-label="Ещё один маленький сюрприз">
-      <span className="second-bottom__thread" aria-hidden="true">♡</span>
-      <p className="finale-handwriting">Кажется, здесь осталось ещё кое-что…</p>
+    <section className="letter-afterword" aria-label="Продолжение истории">
+      <span className="letter-afterword__heart" aria-hidden="true">♡</span>
+      <p className="finale-handwriting">А теперь — немного радости для тебя.</p>
       <button className="story-button" type="button" onClick={() => {
         stopVoice();
-        send({ type: 'open-second-bottom' });
+        send({ type: 'show-finale' });
         playEffect('paper');
-      }}>Заглянуть под второе дно</button>
+      }}>Перейти к подаркам</button>
     </section>
-  </ScenePanel>;
+  </FinaleLayout>;
 }

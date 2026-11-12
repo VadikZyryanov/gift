@@ -1,27 +1,66 @@
 .sound-toggle { display: grid; width: 44px; height: 44px; padding: 8px; place-items: center; border: 0; border-radius: 50%; background: #fff0e645; color: var(--berry); }
 .sound-toggle svg { width: 28px; height: 28px; }
 .table-heading > .sound-toggle { position: absolute; right: -4px; top: -8px; }
-.chest-reveal { position: relative; width: min(100%, 360px); margin: 24px auto 0; }
-.chest-reveal__glow { position: absolute; inset: 8% 10%; border-radius: 50%; background: radial-gradient(ellipse, #ffe8a1aa, #ffe4c14d 45%, transparent 70%); pointer-events: none; animation: chest-light 1s ease-out; }
-.chest-reveal__chest { position: relative; display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: contain; animation: treasure-arrive .65s ease-out; }
+.finale-page { position: fixed; z-index: 20; inset: 0; overflow-y: auto; overscroll-behavior-y: contain; background: radial-gradient(ellipse at 50% 18%, #fff9e9c9, transparent 65%), var(--scene-background); -webkit-overflow-scrolling: touch; }
+.finale-page__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: min(100%, 860px); margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left)); }
+.finale-page__heart { color: var(--berry); font-family: var(--handwriting); font-size: 2rem; }
+.finale-page__body { width: min(100%, 640px); margin: 0 auto; padding: 20px max(20px, env(safe-area-inset-right)) max(48px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); text-align: center; }
+.finale-page__title { margin: 4px 0 12px; color: #6c2e48; font-family: var(--handwriting); font-size: clamp(2.25rem, 9vw, 3.25rem); font-weight: 600; line-height: 1.15; text-wrap: balance; overflow-wrap: anywhere; outline: none; }
+.finale-page__eyebrow { margin: 12px 0; color: #78546a; font-size: .8125rem; line-height: 1.8; overflow-wrap: anywhere; }
+.chest-page .finale-page__body { width: min(100%, 760px); }
+.chest-opening { position: relative; width: min(100%, 560px); aspect-ratio: 3 / 2; margin: 16px auto 0; pointer-events: none; }
+.chest-opening__glow { position: absolute; inset: -12% -8%; border-radius: 50%; background: radial-gradient(ellipse, #fff0acb3, #ffe4c14d 40%, transparent 70%); }
+.chest-opening__closed, .chest-opening__open { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+.chest-opening__open { opacity: .7; transform: scale(.9); }
+.chest-opening__lock { position: absolute; left: 43%; top: 35%; width: 14%; filter: drop-shadow(0 4px 3px #68371955); }
+.chest-opening__lock svg { width: 100%; height: auto; }
+.chest-opening__spark { position: absolute; color: #c48e42; font-size: 2rem; }
+.chest-opening__spark--one { top: 18%; left: 15%; }
+.chest-opening__spark--two { top: 8%; right: 13%; font-size: 1.5rem; }
+.chest-opening__spark--three { top: 42%; right: 8%; color: #b56c82; }
+.chest-page__envelope { position: relative; width: min(100%, 440px); margin: -17% auto 0; }
+.chest-page--entering .chest-opening__closed { animation: chest-closed 2.8s both; }
+.chest-page--entering .chest-opening__open { animation: chest-open 2.8s both; }
+.chest-page--entering .chest-opening__lock { animation: lock-fall 2.8s both; }
+.chest-page--entering .chest-opening__glow { animation: chest-light 2.8s both; }
+.chest-page--entering .chest-page__envelope { animation: envelope-flight 2.8s both; }
+.chest-page__skip { display: block; min-height: 44px; max-width: 100%; margin: 8px auto 0; padding: 8px 16px; border: 0; background: none; color: #78546a; font-size: .8125rem; overflow-wrap: anywhere; }
+.envelope { display: block; width: 100%; aspect-ratio: 640 / 426; margin: 0 auto; padding: 0; border: 0; background: none; user-select: none; -webkit-user-select: none; }
+.envelope img { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 14px 12px #6d344421); }
 .finale-handwriting { margin: 16px 0; color: var(--berry); font-family: var(--handwriting); font-size: 1.65rem; line-height: 1.35; overflow-wrap: anywhere; }
-.envelope-button { display: block; width: min(100%, 280px); min-height: 48px; margin: 16px auto 0; padding: 0 0 12px; border: 0; background: none; color: #74364e; }
-.envelope-button img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: contain; animation: envelope-arrive .8s ease-out; }
-.envelope-button > span { display: block; padding: 12px 16px; border: 1px solid #c8a174; border-radius: 999px; background: #fff0dc; font-size: .9375rem; line-height: 1.5; overflow-wrap: anywhere; }
 .content-draft { margin: 16px 0; color: #805b72; font-size: .8125rem; line-height: 1.7; overflow-wrap: anywhere; }
-.love-letter { position: relative; margin: 24px 0; padding: 24px 20px; border: 1px solid #dfbc9f; border-radius: 4px 16px 4px 16px; background: linear-gradient(115deg, #fff9ec, #ffefdc 75%, #fae4ce); box-shadow: 0 8px 24px #79435012; text-align: left; font-size: 1rem; line-height: 1.95; overflow-wrap: anywhere; animation: letter-unfold .6s ease-out; }
+.letter-page { background: radial-gradient(ellipse at 50% 8%, #fff8ed, #f3dec9 80%); }
+.letter-page .finale-page__body { width: min(100%, 740px); }
+.love-letter { position: relative; margin: 28px 0; padding: clamp(24px, 6vw, 48px) clamp(20px, 5vw, 44px); border-top: 1px solid #d3b38d; border-bottom: 1px solid #d3b38d; background: linear-gradient(115deg, #fffdf4, #fff3df 75%, #fae8d2); box-shadow: 0 12px 40px #79435015; text-align: left; font-size: 1rem; line-height: 1.95; overflow-wrap: anywhere; animation: letter-unfold .6s ease-out; }
+.love-letter::before, .love-letter::after { content: ''; display: block; width: 72px; height: 1px; margin: 0 auto 32px; background: linear-gradient(90deg, transparent, #c39569, transparent); }
+.love-letter::after { margin: 32px auto 0; }
 .love-letter p { margin: 0 0 20px; }
 .love-letter p:last-child { margin-bottom: 0; }
 .love-letter .love-letter__greeting, .love-letter .love-letter__signature { color: #8b3d56; font-family: var(--handwriting); font-size: 1.65rem; line-height: 1.45; }
 .love-letter__signature { text-align: right; }
 .voice-message { margin-block: 24px; }
 .voice-message__status { margin: 12px 0 0; font-size: .8125rem; line-height: 1.75; overflow-wrap: anywhere; }
-.second-bottom { margin-top: 32px; padding-top: 24px; border-top: 1px dashed #c8a9ba; }
-.second-bottom__thread { display: block; margin: auto; color: #b88b50; font-size: 2rem; }
-.finale-keepsake { display: grid; width: min(100%, 200px); aspect-ratio: 1.25; place-items: center; margin: 32px auto 24px; border: 1px solid #dbc2a4; border-radius: 8px 24px; background: #fff2dd; box-shadow: 0 8px 24px #79435015; transform: rotate(-3deg); animation: treasure-arrive .6s ease-out; }
-.finale-keepsake > span { color: var(--berry); font-family: var(--handwriting); font-size: 4rem; }
-.finale-copy { margin: 16px 0; font-size: 1rem; line-height: 1.85; overflow-wrap: anywhere; }
-@keyframes treasure-arrive { from { opacity: .2; transform: translateY(12px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes chest-light { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
-@keyframes envelope-arrive { from { opacity: 0; transform: translateY(16px) rotate(-4deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+.letter-afterword { margin-top: 32px; padding-top: 12px; }
+.letter-afterword__heart { display: block; margin: auto; color: #b88b50; font-family: var(--handwriting); font-size: 2.5rem; }
+.gift-selection { margin-block: 32px 48px; }
+.gift-selection__title { margin: 8px 0 16px; color: #74364e; font-family: var(--handwriting); font-size: 2.2rem; line-height: 1.2; overflow-wrap: anywhere; }
+.gift-selection__intro { margin: 0; font-size: .9375rem; line-height: 1.8; overflow-wrap: anywhere; }
+.gift-selection__cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+.gift-card { display: flex; flex-direction: column; position: relative; min-width: 0; padding: 20px 16px 16px; border: 1px solid #d2b49a; border-radius: 3px 18px 3px 18px; background: linear-gradient(135deg, #fff9ed, #f9e6d9); box-shadow: 0 8px 20px #7943500a; text-align: left; }
+.gift-card--selected { border: 2px solid #9c365c; padding: 19px 15px 15px; background: linear-gradient(135deg, #fff6e7, #f5d7de); }
+.gift-card__number { margin-bottom: 18px; color: #a87b4a; font-family: var(--handwriting); font-size: 1.5rem; line-height: 1; }
+.gift-card__title { color: #74364e; font-size: 1rem; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.gift-card__description { display: block; flex: 1; margin-top: 10px; font-size: .75rem; line-height: 1.8; overflow-wrap: anywhere; }
+.gift-card__state { display: block; margin-top: 20px; color: #9c365c; font-size: .8125rem; line-height: 1.5; overflow-wrap: anywhere; }
+.gift-card__state > span { margin-right: 4px; }
+.gift-selection__summary { margin-top: 24px; padding: 20px 16px; border-block: 1px solid #c8a9ba66; }
+.gift-selection__summary > p { margin: 8px 0; line-height: 1.75; overflow-wrap: anywhere; }
+.gift-selection__saved, .gift-selection__copy-status { color: #78546a; font-size: .75rem; }
+.gift-selection__fallback { display: block; width: 100%; margin-top: 16px; padding: 12px; border: 1px solid #c8a9ba; border-radius: 4px; background: #fffaf0; color: var(--plum); font: inherit; font-size: .8125rem; line-height: 1.8; resize: vertical; }
+@media (max-width: 380px) { .gift-selection__cards { grid-template-columns: minmax(0, 1fr); } }
+@keyframes chest-light { 0%, 12% { opacity: 0; transform: scale(.6); } 55% { opacity: 1; transform: scale(1.35); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes chest-closed { 0%, 12% { opacity: 1; transform: scale(.72); } 23% { opacity: 0; transform: scale(.78); } 100% { opacity: 0; transform: scale(1); } }
+@keyframes chest-open { 0%, 15% { opacity: 0; transform: scale(.72); } 40% { opacity: 1; transform: scale(1.08); } 65% { opacity: 1; transform: scale(1.04); } 100% { opacity: .7; transform: scale(.9); } }
+@keyframes lock-fall { 0%, 8% { opacity: 1; transform: translate(0, 0) rotate(0); } 15% { opacity: 1; transform: translate(15%, -35%) rotate(-20deg); } 34%, 100% { opacity: 0; transform: translate(180%, 160%) rotate(100deg); } }
+@keyframes envelope-flight { 0%, 44% { opacity: 0; transform: translateY(-16%) scale(.2) rotate(-12deg); } 72% { opacity: 1; transform: translateY(-24%) scale(.85) rotate(3deg); } 100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); } }
 @keyframes letter-unfold { from { opacity: .2; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
