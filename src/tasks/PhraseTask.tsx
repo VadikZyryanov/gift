@@ -40,7 +40,7 @@ export function PhraseTask({ task, draft, onDraftChange, onSolved }: PhraseTaskP
             </li>
           ))}
         </ol>
-        {selectedIds.length === 0 && <p className="phrase-task__placeholder">Здесь появится твоё обещание</p>}
+        {selectedIds.length === 0 && <p className="phrase-task__placeholder">Здесь появится то самое пожелание</p>}
         <button className="phrase-task__clear" type="button" disabled={selectedIds.length === 0} onClick={() => updateWords([])}>Очистить фразу</button>
       </div>
       <div className="phrase-task__words" role="group" aria-label="Слова для фразы">

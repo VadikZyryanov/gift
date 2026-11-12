@@ -7,9 +7,10 @@ interface ScenePanelProps {
   backLabel?: string;
   returnFocusId?: string;
   entrance?: 'heart';
+  layout?: 'panorama';
 }
 
-export function ScenePanel({ title, onBack, children, backLabel = 'На стол', returnFocusId, entrance }: ScenePanelProps) {
+export function ScenePanel({ title, onBack, children, backLabel = 'На стол', returnFocusId, entrance, layout }: ScenePanelProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 
@@ -31,7 +32,7 @@ export function ScenePanel({ title, onBack, children, backLabel = 'На стол
   }, [returnFocusId]);
 
   return (
-    <dialog ref={dialogRef} className={`scene-panel${entrance === 'heart' ? ' scene-panel--heart' : ''}`} aria-labelledby={titleId} onCancel={(event) => {
+    <dialog ref={dialogRef} className={`scene-panel${entrance === 'heart' ? ' scene-panel--heart' : ''}${layout === 'panorama' ? ' scene-panel--panorama' : ''}`} aria-labelledby={titleId} onCancel={(event) => {
       event.preventDefault();
       // React portal events still reach the underlying scene's handlers.
       event.stopPropagation();

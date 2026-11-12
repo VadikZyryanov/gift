@@ -55,6 +55,22 @@ function parseDraft(task: TaskDefinition, draft: unknown): TaskDraft | null {
       if (!Array.isArray(ids) || !ids.every((id: unknown): id is string => typeof id === 'string' && task.spots.some(spot => spot.id === id))) return null;
       return { kind: 'detail', inspectedIds: [...new Set(ids)] };
     }
+    case 'family': {
+      const selectedMember = task.members.find(member => member.id === draft.selectedMemberId);
+      if (draft.selectedMemberId !== null && !selectedMember) return null;
+      if (!isRecord(draft.answers)) return null;
+      const answers: Extract<TaskDraft, { kind: 'family' }>['answers'] = {};
+      for (const [id, answer] of Object.entries(draft.answers)) {
+        const member = task.members.find(item => item.id === id);
+        if (!member || !isRecord(answer) || typeof answer.confirmed !== 'boolean') return null;
+        const { month, year, confirmed } = answer;
+        if (month !== null && (typeof month !== 'number' || !Number.isInteger(month) || month < 1 || month > 12)) return null;
+        if (year !== null && (typeof year !== 'number' || !task.years.includes(year))) return null;
+        if (confirmed && (month !== member.month || year !== member.year)) return null;
+        answers[member.id] = { month, year, confirmed };
+      }
+      return { kind: 'family', selectedMemberId: selectedMember?.id ?? null, answers };
+    }
   }
 }
 
@@ -94,7 +110,19 @@ export function readProgress(storage: Storage, contentRevision: number): Pick<Ga
   }
   if (raw === null) return { progress: createInitialProgress(contentRevision), status: 'available' };
   try {
-    const progress = parseProgress(JSON.parse(raw), contentRevision);
+    const value: unknown = JSON.parse(raw);
+    // Apply known content migrations in order, retaining earned keys and other drafts.
+    if (isRecord(value) && value.schemaVersion === 1 && isRecord(value.drafts)) {
+      if (value.contentRevision === 3 && (contentRevision === 4 || contentRevision === 5)) {
+        value.contentRevision = 4;
+        delete value.drafts.proposal;
+      }
+      if (value.contentRevision === 4 && contentRevision === 5) {
+        value.contentRevision = 5;
+        delete value.drafts.family;
+      }
+    }
+    const progress = parseProgress(value, contentRevision);
     if (progress) return { progress, status: 'available' };
   } catch { /* Invalid JSON follows the same safe recovery as an invalid snapshot. */ }
   return { progress: createInitialProgress(contentRevision), status: 'recovered' };

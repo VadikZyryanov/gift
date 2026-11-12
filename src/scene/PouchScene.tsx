@@ -5,9 +5,11 @@ import { StorageNotice } from '../components/StorageNotice';
 import { gameContent } from '../game/content';
 import { useGame } from '../game/GameProvider';
 import type { PouchId, TaskDraft } from '../game/types';
-import { DetailTask } from '../tasks/DetailTask';
+import { FamilyTask } from '../tasks/FamilyTask';
+import { FamilyPicture, FamilyTimeline } from '../tasks/FamilyPicture';
 import { PhraseTask } from '../tasks/PhraseTask';
 import { QuizTask } from '../tasks/QuizTask';
+import { TaskImage } from '../tasks/TaskImage';
 import { pouchImages } from './assets';
 import { SecretSpot } from '../secrets/SecretSpot';
 import { secretImages } from '../secrets/assets';
@@ -48,24 +50,38 @@ export function PouchScene({ pouchId }: PouchSceneProps) {
     switch (task.kind) {
       case 'quiz': return <QuizTask task={task} draft={draft?.kind === 'quiz' ? draft : undefined} {...callbacks} />;
       case 'phrase': return <PhraseTask task={task} draft={draft?.kind === 'phrase' ? draft : undefined} {...callbacks} />;
-      case 'detail': return <DetailTask task={task} draft={draft?.kind === 'detail' ? draft : undefined} {...callbacks} />;
+      case 'family': return <FamilyTask task={task} draft={draft?.kind === 'family' ? draft : undefined} {...callbacks} />;
     }
   }
   return (
-    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`} entrance={pouchId === 'beginning' || pouchId === 'journey' ? 'heart' : undefined}>
+    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`} entrance={pouchId === 'beginning' || pouchId === 'journey' ? 'heart' : undefined} layout={pouchId === 'family' ? 'panorama' : undefined}>
       <StorageNotice />
-      <p className="pouch-preview__subtitle">{pouch.subtitle}</p>
+      {pouchId !== 'family' && <><p className="pouch-preview__subtitle">{pouch.subtitle}</p>
       <div className={`pouch-preview__art pouch-preview__art--${pouchId} pouch-preview__art--task${newReward ? ' pouch-preview__art--opening' : ''}`}>
         {pouchId === 'proposal' && <SecretSpot secretId="green-dress" label="Край открытки" className="secret-spot--dress">
           <span className="secret-spot__postcard"><img src={secretImages.dress} alt="" width="512" height="768" draggable="false" /></span>
         </SecretSpot>}
         <img src={pouchImages[pouchId]} alt="" width="640" height="600" draggable="false" />
-      </div>
+      </div></>}
       {showReward ? (
-        <section className={`pouch-reward${newReward ? ' pouch-reward--new' : ''}`} aria-label="Записка и найденный ключ" aria-live="polite">
+        <section className={`pouch-reward${pouchId === 'family' ? ' pouch-reward--family' : ''}${newReward ? ' pouch-reward--new' : ''}`} aria-label="Записка и найденный ключ" aria-live="polite">
           <span className="pouch-reward__key" aria-hidden="true"><KeyOrnament /></span>
           <p className="pouch-reward__title" ref={rewardRef} tabIndex={-1}>Ключ найден</p>
           <p className="pouch-reward__note">{pouch.rewardNote}</p>
+          {task.kind === 'family' && <>
+            <FamilyPicture task={task} foundIds={task.members.map(member => member.id)} />
+            <FamilyTimeline task={task} />
+          </>}
+          {pouchId === 'proposal' && <article className="proposal-letter" aria-label={gameContent.proposalLetter.title}>
+            <figure className="proposal-letter__photo">
+              <TaskImage {...gameContent.proposalLetter.image} />
+              <figcaption className="proposal-letter__date">{gameContent.proposalLetter.date}</figcaption>
+            </figure>
+            <div className="proposal-letter__body">
+              <h3 className="proposal-letter__title">{gameContent.proposalLetter.title}</h3>
+              {gameContent.proposalLetter.stanzas.map(stanza => <p className="proposal-letter__stanza" key={stanza}>{stanza}</p>)}
+            </div>
+          </article>}
           <button className="story-button" type="button" onClick={onBack}>Вернуться на стол</button>
         </section>
       ) : celebrating && task.kind === 'quiz' ? (

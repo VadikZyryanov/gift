@@ -2,8 +2,10 @@
 
 Built-in `image_gen.imagegen`, four separate calls, transparent background requested.
 All outputs inspected before resizing with `cwebp -q 85`. Existing front chest retained.
-The dress is an editorial stand-in authorized by the owner, to be replaced from a photo later.
-No real personal photographs were supplied.
+The original dress was an editorial stand-in. On 11 November 2026 it was replaced
+with a reference-based illustration using the owner's IMG_2168.jpg. The same photograph
+was later added to the proposal postcard as `content/proposal-evening.webp`.
+The other stage-5 assets retain their original prompts below.
 
 ## back
 
@@ -17,12 +19,16 @@ Use case: precise-object-edit. Asset: back face of the romantic treasure chest f
 
 ## dress
 
-- Source: `/Users/vadikzyranov/.codex/generated_images/01a1c085-d29f-73d2-beb2-c16ca768464f/exec-8a44000d-0592-4b0e-ae39-d51aafda8ac7.png`
+- Source: `/Users/vadikzyranov/.codex/generated_images/01a1caa4-700e-7491-8cc7-4fd446017977/exec-3d178073-fc2e-48df-8868-d0d8cb7367da.png`
+- Garment reference: owner-supplied `IMG_2168.jpg`; previous asset used for style only.
 - Project asset: `src/assets/content/secret-green-dress.webp`
-- Size: 512×768.
+- Size: 512×768, 36 194 bytes; `cwebp -q 85 -resize 512 768`, alpha preserved.
+- Built-in imagegen, `transparent_background: true`, two visible reference images.
+  Direct local reference paths were unavailable to imagegen, so the same inspected
+  images were supplied through `num_last_images_to_include: 2`.
 
 ```text
-Use case: illustration-story. Asset: single collectible for an intimate romantic mobile game, painterly storybook illustration with realistic soft satin texture, warm peach/lavender light and gentle gold accents. A beautiful emerald green flowing evening dress, sleeveless with delicate straps and softly draped skirt, on a small elegant wooden hanger, no person. Three-quarter gentle fabric folds, entire dress visible, isolated centered with generous transparent margin. This is an editorial stand-in for a real engagement dress, not a portrait or exact personal garment. Color is unmistakably deep emerald green. No card, no lettering, no background scene, no frame, no watermark. Genuinely transparent background. Vertical balanced composition.
+Create a replacement collectible dress illustration for an existing intimate romantic storybook game. Of the TWO provided images, the couple's seaside sunset PHOTO is the EXACT GARMENT reference; the isolated hanger illustration is STYLE/PRESENTATION ONLY. Draw the emerald green dress from the woman in the PHOTO ALONE on a simple elegant wooden hanger, preserving its recognizable construction: deep saturated emerald green, wide off-shoulder neckline with bare shoulders, short softly puffed draped sleeves, softly gathered fitted waist, flowing calf-to-ankle length skirt with a high slit on the viewer's RIGHT. Garment reference has smooth softly flowing fabric, not the gold-decorated formal gown in the illustration. NO thin straps, NO golden appliques, NO ornate gold flowers, NO floor-length train, NO layered ruffle cascade. Remove the current asset's shoulder straps and gold decorations. Use restrained painterly storybook rendering, natural soft folds, warm peach/lavender reflected light consistent with the current isolated illustration. Clean full garment silhouette centered in portrait 2:3 composition, simple wooden hanger fully visible, 6% transparent margin around the entire object. NO person, mannequin, limbs, face, shoes, sea, sunset, photo background, text, frame or card. The source photograph is only a reference for the green dress, do not recreate the people. Genuinely transparent background. Save the generated PNG to the filesystem and return its absolute path in output_hint so it can be installed into the project.
 ```
 
 ## bueno

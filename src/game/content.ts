@@ -1,8 +1,9 @@
 import { journeyTask } from './journey';
-import familyImage from '../assets/content/family-keepsakes.webp';
+import { familyTask } from './family';
 import beachImage from '../assets/content/beginning-beach.webp';
 import bouquetImage from '../assets/content/beginning-bouquet.webp';
 import cafeImage from '../assets/content/beginning-cafe.webp';
+import proposalImage from '../assets/content/proposal-evening.webp';
 import { secretImages } from '../secrets/assets';
 import type { LetterContent, PouchContent, PouchId, QuizTaskDefinition, SecretContent, SecretId } from './types';
 
@@ -66,18 +67,18 @@ const beginningTask: QuizTaskDefinition = {
 
 // Beginning and journey use owner-supplied photos; remaining copy/art still need personal review.
 export const gameContent = {
-  revision: 3,
+  revision: 5,
   status: 'draft',
   title: 'KitKat в чемодане',
   dedication: 'Для моей булочки',
   instruction: 'Выбери сумочку — в каждой маленькая тайна.',
   signature: 'Собрал с любовью. Для тебя.',
-  // Editorial drafts from confirmed facts; no personal photo has been supplied yet.
+  // Editorial notes from confirmed facts; the dress illustration uses the owner's photo.
   secrets: {
     'green-dress': {
       title: 'То самое зелёное платье',
       text: 'Турция, 17 октября 2025-го. Ты в зелёном платье, а у нас впереди — новая глава. Как же я люблю, что в нашей истории есть этот день. И ты.',
-      image: { src: secretImages.dress, alt: 'Нарисованное изумрудно-зелёное платье на вешалке' },
+      image: { src: secretImages.dress, alt: 'Зелёное платье с открытыми плечами, короткими объёмными рукавами и разрезом — рисунок по фотографии с предложения' },
     },
     'white-bueno': {
       title: 'Белый Bueno',
@@ -91,6 +92,16 @@ export const gameContent = {
     },
   } satisfies Record<SecretId, SecretContent>,
   bonusMessage: 'Все маленькие тайны нашлись. А мою главную ты давно знаешь: я люблю тебя. Мне хочется, чтобы в нашей жизни всегда оставалось место для таких маленьких радостей — и для больших мечт на двоих.',
+  proposalLetter: {
+    title: 'Слова того вечера',
+    date: '17 октября 2025 · Турция',
+    image: { src: proposalImage, alt: 'Мы обнимаемся у моря на закате в тот вечер, когда я сделал тебе предложение', width: 1290, height: 1679 },
+    stanzas: [
+      'ты знаешь, тут так красиво и тепло\nИногда я не верю, что мне так повезло\nЧто я именно с тобой могу все эти классные моменты разделять\nА потом пересматривать фотки, с улыбкой вспоминать',
+      'А кстати помнишь? бабушка что мимо проходила дала совет\nЧтоб вместе так и было до 80 лет\nИ я подумал почему б и нет?',
+      'и вот перед тобою я стою\nв твои глаза зеленые глядя\nхочу сказать, что я тебя люблю,\nи спросить, ты выйдешь за меня?',
+    ],
+  },
   letter: {
     status: 'draft',
     greeting: 'Булочка моя,',
@@ -128,39 +139,30 @@ export const gameContent = {
       description: 'Есть вопросы, после которых начинается новая глава. Самая тёплая, самая наша.',
       task: {
         kind: 'phrase',
-        question: 'Собери маленькое обещание',
-        caption: 'Фраза для этой игры, не дословные слова предложения. Коснись слов по порядку; чтобы убрать слово, коснись его ещё раз в собранной фразе.',
+        question: 'Помнишь, что нам пожелали?',
+        caption: 'Собери то самое пожелание из слов. Коснись их по порядку; чтобы убрать слово, коснись его ещё раз в собранной фразе. Здесь пригодятся все слова.',
         words: [
-          { id: 'forever', label: 'навсегда' },
+          { id: 'eighty', label: '80' },
           { id: 'together', label: 'вместе' },
-          { id: 'you', label: 'тобой' },
-          { id: 'with', label: 'С' },
+          { id: 'would-be', label: 'было' },
+          { id: 'wish', label: 'Чтоб' },
+          { id: 'years', label: 'лет' },
+          { id: 'until', label: 'до' },
+          { id: 'and', label: 'и' },
+          { id: 'so', label: 'так' },
         ],
-        answerIds: ['with', 'you', 'forever'],
-        hint: 'Все слова рядом. Попробуй другой порядок: начни с «С». Одно слово здесь лишнее.',
+        answerIds: ['wish', 'together', 'so', 'and', 'would-be', 'until', 'eighty', 'years'],
+        hint: 'Помнишь совет бабушки, которая проходила мимо? Начни с «Чтоб вместе», а в конце — «до 80 лет».',
       },
-      rewardNote: '17 октября 2025 года, наша вторая поездка в Турцию. Там я сделал тебе предложение. А теперь у нас есть целая жизнь, чтобы наполнять её нашими историями.',
+      rewardNote: 'И я подумал почему б и нет?\n\n17 октября 2025 года, наша вторая поездка в Турцию. В тот вечер я задал тебе самый важный вопрос. А теперь у нас есть целая жизнь, чтобы наполнять её нашими историями.',
     },
     family: {
       status: 'draft',
       title: 'Самое дорогое',
       subtitle: 'Больше, чем целый мир',
-      description: 'Самые дорогие сокровища не спрячешь в сундук. Их просто очень хочется беречь.',
-      task: {
-        kind: 'detail',
-        question: 'Найди сердечко на детской пелёнке',
-        caption: 'Нарисованный семейный натюрморт для игры. Коснись детали, в которой спряталось сердечко.',
-        image: { src: familyImage, alt: 'Пионы, обручальные кольца, пелёнка с вышитым сердечком и детские пинетки' },
-        spots: [
-          { id: 'flowers', label: 'Пионы', x: 25, y: 25 },
-          { id: 'rings', label: 'Обручальные кольца', x: 76, y: 25 },
-          { id: 'heart', label: 'Сердечко на пелёнке', x: 28, y: 70 },
-          { id: 'booties', label: 'Детские пинетки', x: 76, y: 72 },
-        ],
-        targetId: 'heart',
-        hint: 'Здесь тоже есть своя нежность. А сердечко спряталось на пелёнке — посмотри внизу слева.',
-      },
-      rewardNote: '20 февраля 2026 года мы стали семьёй. А 26 октября появился Святослав. Вы — самое дорогое, что у меня есть. Спасибо тебе за наш маленький мир, булочка.',
+      description: 'Мягкие лапы, верный хвост и самые маленькие ладошки. У каждого — своё место в нашей истории.',
+      task: familyTask,
+      rewardNote: 'Сначала нас стало больше на четыре лапы. Потом — ещё на четыре. А потом появились самые маленькие ладошки. И целый новый мир.\n\nСпасибо тебе за наш дом, за Томаса, Шелби и Святослава. За всю эту жизнь, которую мы создаём вместе.',
     },
   } satisfies Record<PouchId, PouchContent>,
 } as const;

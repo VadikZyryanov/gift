@@ -34,11 +34,23 @@ export type QuizDraft = { kind: 'quiz'; questionId: string; selectedId: string |
 export type PhotoDraft = { kind: 'photo'; selectedId: string | null };
 export type PhraseDraft = { kind: 'phrase'; selectedWordIds: string[] };
 export type DetailDraft = { kind: 'detail'; inspectedIds: string[] };
+export type FamilyMemberId = 'thomas' | 'shelby' | 'svyatoslav';
+export interface FamilyDateAnswer {
+  month: number | null;
+  year: number | null;
+  confirmed: boolean;
+}
+export interface FamilyDraft {
+  kind: 'family';
+  selectedMemberId: FamilyMemberId | null;
+  answers: Partial<Record<FamilyMemberId, FamilyDateAnswer>>;
+}
 export type TaskDraft =
   | QuizDraft
   | PhotoDraft
   | PhraseDraft
-  | DetailDraft;
+  | DetailDraft
+  | FamilyDraft;
 
 export interface QuizQuestion {
   id: string;
@@ -97,7 +109,37 @@ export interface DetailTaskDefinition {
   hint: string;
 }
 
-export type TaskDefinition = QuizTaskDefinition | PhotoTaskDefinition | PhraseTaskDefinition | DetailTaskDefinition;
+export interface FamilyMember {
+  id: FamilyMemberId;
+  name: string;
+  question: string;
+  hint: string;
+  successMessage: string;
+  searchHint: string;
+  month: number;
+  year: number;
+  spriteColumn: 0 | 1 | 2;
+  sprites: {
+    image: TaskImageSource;
+    columns: 2 | 3;
+    rows: 1 | 2;
+  };
+  // Position and width of a square sprite, in percentages of the whole scene.
+  x: number;
+  y: number;
+  width: number;
+}
+
+export interface FamilyTaskDefinition {
+  kind: 'family';
+  question: string;
+  caption: string;
+  image: TaskImageSource;
+  years: readonly number[];
+  members: readonly [FamilyMember, ...FamilyMember[]];
+}
+
+export type TaskDefinition = QuizTaskDefinition | PhotoTaskDefinition | PhraseTaskDefinition | DetailTaskDefinition | FamilyTaskDefinition;
 
 export interface PouchContent extends PouchPreview {
   status: 'draft' | 'ready';
