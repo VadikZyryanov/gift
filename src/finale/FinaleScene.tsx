@@ -29,7 +29,7 @@ export function FinaleScene() {
       </div>
       {found.length === secretIds.length ? <article className="secret-bonus" aria-label="Ещё кое-что для тебя">
         <h3>Ещё кое-что для тебя</h3><p>{gameContent.bonusMessage}</p>
-      </article> : <p className="secret-results__invitation">Кажется, среди наших вещей спряталось ещё кое-что. Можно вернуться и присмотреться.</p>}
+      </article> : <p className="secret-results__invitation">Кажется, среди наших вещей спряталось ещё кое-что. Нужно вернуться и присмотреться.</p>}
     </section>
     <button className="story-button" type="button" onClick={() => send({ type: 'open-letter' })}>Перечитать письмо</button>
     <button className="story-button story-button--quiet" type="button" onClick={onBack}>Вернуться на стол</button>
