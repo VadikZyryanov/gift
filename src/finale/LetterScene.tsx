@@ -5,6 +5,7 @@ import { StorageNotice } from '../components/StorageNotice';
 import { gameContent } from '../game/content';
 import { useGame } from '../game/GameProvider';
 import type { LetterContent } from '../game/types';
+import { VoicePlaybackHeart, type VoiceHeartState } from './VoicePlaybackHeart';
 
 type VoiceState = 'idle' | 'loading' | 'playing' | 'paused' | 'error';
 
@@ -14,6 +15,7 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const requestRef = useRef(0);
   const [voiceState, setVoiceState] = useState<VoiceState>('idle');
+  const [voiceHeartState, setVoiceHeartState] = useState<VoiceHeartState>('idle');
   const voiceActive = voiceState === 'playing' || voiceState === 'loading';
   const voiceActionLabel = voiceState === 'playing' ? 'Пауза' : voiceState === 'loading' ? 'Отменить воспроизведение' : voiceState === 'error' ? 'Попробовать ещё раз' : voiceState === 'paused' ? 'Продолжить послание' : 'Послушать послание';
   const attachVoice = useCallback((element: HTMLAudioElement | null) => {
@@ -25,6 +27,7 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
     const pause = () => {
       requestRef.current++;
       stopVoice();
+      setVoiceHeartState(current => current === 'playing' ? 'paused' : current);
       setVoiceState(current => current === 'idle' || current === 'error' ? current : 'paused');
     };
     const onVisibility = () => { if (document.visibilityState === 'hidden') pause(); };
@@ -45,9 +48,11 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
     if (voiceState === 'playing' || voiceState === 'loading') {
       audio.pause();
       setVoiceState('paused');
+      setVoiceHeartState(current => current === 'playing' ? 'paused' : current);
       return;
     }
     if (voiceState === 'error') audio.load();
+    if (audio.ended) audio.currentTime = 0;
     setVoiceState('loading');
     try {
       await audio.play();
@@ -59,7 +64,10 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
       }
       setVoiceState('playing');
     } catch {
-      if (request === requestRef.current) setVoiceState('error');
+      if (request === requestRef.current) {
+        setVoiceState('error');
+        setVoiceHeartState('idle');
+      }
     }
   }
 
@@ -73,17 +81,26 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
     <article className="love-letter" aria-label="Письмо для тебя">
       <header className="love-letter__header">
         <p className="love-letter__greeting">{letter.greeting}</p>
-        {letter.voiceSrc && <div className="voice-message">
+        {letter.voiceSrc && <div className="voice-message voice-message--with-heart">
           <audio key={letter.voiceSrc} ref={attachVoice} src={letter.voiceSrc} preload="none"
-            onPause={() => { setVoiceState(current => current === 'playing' ? 'paused' : current); }}
-            onEnded={() => setVoiceState('paused')}
-            onError={() => { requestRef.current++; setVoiceState('error'); }} />
+            onPlaying={event => {
+              if (!event.currentTarget.paused && !event.currentTarget.ended && document.visibilityState !== 'hidden') setVoiceHeartState('playing');
+            }}
+            onWaiting={() => setVoiceHeartState('idle')}
+            onPause={event => {
+              setVoiceState(current => current === 'playing' ? 'paused' : current);
+              if (event.currentTarget.ended) setVoiceHeartState('idle');
+              else setVoiceHeartState(current => current === 'playing' ? 'paused' : current);
+            }}
+            onEnded={() => { setVoiceState('paused'); setVoiceHeartState('idle'); }}
+            onError={() => { requestRef.current++; setVoiceState('error'); setVoiceHeartState('idle'); }} />
           <button className="voice-message__button" type="button" aria-label={voiceActionLabel} title={voiceActionLabel}
             onClick={() => { void toggleVoice(); }}>
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d={voiceActive ? 'M6 5h4v14H6zM14 5h4v14h-4z' : 'm8 5 11 7-11 7V5Z'} />
             </svg>
           </button>
+          <VoicePlaybackHeart state={voiceState === 'playing' || voiceState === 'paused' ? voiceHeartState : 'idle'} />
           <span className="voice-message__status" role="status">{voiceState === 'loading' ? 'Открываю послание…' : voiceState === 'playing' ? 'Послание звучит.' : voiceState === 'paused' ? 'Послание на паузе.' : ''}</span>
         </div>}
       </header>

@@ -4,6 +4,7 @@ import { gameContent } from '../game/content';
 import { pouchIds, type PouchId } from '../game/types';
 import { pouchImages, sceneImages } from './assets';
 import { RotatingChest } from './RotatingChest';
+import { FlowerPetals, TableDedication, TableHeart } from './TableDelights';
 
 interface TableSceneProps {
   completedPouches: readonly PouchId[];
@@ -79,8 +80,8 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onCheck
           {soundControl ?? <span className="sound-indicator" role="img" aria-label="Звук выключен">
             <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 12h6l8-7v22l-8-7H4v-8Zm20 1 6 6m0-6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </span>}
-          <p className="dedication">{gameContent.dedication}</p>
-          <HeartDivider />
+          <TableDedication text={gameContent.dedication} />
+          <TableHeart />
           <h1 aria-label={gameContent.title}>KitKat<span>в чемодане</span></h1>
           <p className="table-instruction">{gameContent.instruction}</p>
         </header>
@@ -111,13 +112,14 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onCheck
         <section className="treasure" aria-label="Ключи и сундук">
           <p className="key-count" aria-live="polite">Ключи: {keyCount} из 4</p>
           <div className="key-row" aria-hidden="true">
-            {pouchIds.map((id) => <span key={id} className={`key-ornament${completedPouches.includes(id) ? ' key-ornament--found' : ''}`}><KeyOrnament /></span>)}
+            {pouchIds.map((id) => <span key={id} id={`table-key-${id}`} className={`key-ornament${completedPouches.includes(id) ? ' key-ornament--found' : ''}`}><KeyOrnament /></span>)}
           </div>
           <div className="treasure__display">
             <RotatingChest onPress={handleChestPress} artRef={chestArtRef} rearContent={chestRear} />
             <div className="table-flower-corner">
               {flowerSecret}
               <img src={sceneImages.decor} alt="" width="500" height="500" aria-hidden="true" />
+              <FlowerPetals />
             </div>
           </div>
           <p id="chest-hint" className="chest-hint" role="status" aria-atomic="true">{chestHint}</p>

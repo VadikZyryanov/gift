@@ -56,7 +56,7 @@ export function QuizTask({ task, draft, onDraftChange, onSolved }: QuizTaskProps
       {!confirmed && <fieldset aria-describedby={showHint ? `${id}-feedback` : undefined}>
         <legend ref={legendRef} tabIndex={-1}>{question.question}</legend>
         <p className="quiz-task__invitation">{question.questionImage ? 'Узнаешь, где мы были? Выбери один из четырёх вариантов.' : 'Давай вспомним нашу историю.'}</p>
-        {question.questionImage && <div className="quiz-task__picture"><TaskImage {...question.questionImage} /></div>}
+        {question.questionImage && <div className="quiz-task__picture"><TaskImage {...question.questionImage} affection /></div>}
         <div className="quiz-task__choices">
           {question.options.map(option => (
             <label key={option.id} className={`quiz-choice${selectedId === option.id ? ' quiz-choice--selected' : ''}`}>
@@ -72,7 +72,7 @@ export function QuizTask({ task, draft, onDraftChange, onSolved }: QuizTaskProps
       </fieldset>}
       {confirmed ? <section className="quiz-memory" ref={memoryRef} tabIndex={-1} aria-label="Наше воспоминание">
         <p id={`${id}-feedback`} className="task-success" role="status">{question.successMessage}</p>
-        {question.successImage && <div className="quiz-memory__picture"><TaskImage {...question.successImage} /></div>}
+        {question.successImage && <div className="quiz-memory__picture"><TaskImage {...question.successImage} affection /></div>}
       </section> : <p id={`${id}-feedback`} className={showHint ? 'task-hint' : 'quiz-task__feedback-empty'} role="status">
         {showHint ? question.hint : ''}
       </p>}

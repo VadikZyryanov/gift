@@ -1,0 +1,51 @@
+.collected-car {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  text-align: center;
+}
+
+.collected-car:focus-visible { outline: 2px solid var(--berry); outline-offset: 5px; }
+.collected-car > .collected-car__art { overflow: clip; }
+.collected-car__invitation { display: block; color: var(--berry); font-size: .6875rem; }
+.collected-car__art { position: relative; display: block; width: min(100%, 120px); aspect-ratio: 640 / 426; margin-inline: auto; pointer-events: none; }
+.collected-car__art img { display: block; width: 100%; height: 100%; object-fit: contain; transform: scaleX(-1); }
+.collected-car__headlight { position: absolute; top: 55%; width: 5%; aspect-ratio: 1; border-radius: 50%; background: #fff5ce; opacity: 0; }
+.collected-car__headlight--near { top: 53%; left: 59%; }
+.collected-car__headlight--far { top: 51%; left: 87%; }
+.collected-car__art--lit .collected-car__headlight { opacity: 1; box-shadow: 0 0 7px 3px #ffe9a4cc, 8px 1px 16px 5px #fff0ad66; }
+.collected-car__headlight::after { content: ''; position: absolute; left: 50%; top: -160%; width: 750%; height: 420%; background: linear-gradient(90deg, #fff2b64d, transparent); clip-path: polygon(0 35%, 100% 0, 100% 100%, 0 65%); }
+
+.collected-car-ride {
+  --car-width: clamp(144px, 30vw, 208px);
+  position: fixed;
+  z-index: 21;
+  inset: auto 0 0;
+  height: calc(var(--car-width) * .85 + env(safe-area-inset-bottom));
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.collected-car-ride__vehicle { position: absolute; bottom: max(10px, env(safe-area-inset-bottom)); left: 0; width: var(--car-width); animation: collected-car-drive var(--car-ride-duration) linear both; }
+.collected-car-ride .collected-car__art { width: 100%; filter: drop-shadow(0 5px 3px #56344129); }
+.collected-car-ride__heart { position: absolute; left: 7%; top: 59%; color: var(--berry); font-family: var(--handwriting); font-size: 1.5rem; line-height: 1; opacity: 0; animation: collected-car-exhaust 1.1s ease-out infinite; }
+.collected-car-ride__heart--two { animation-delay: .36s; font-size: 1.125rem; }
+.collected-car-ride__heart--three { animation-delay: .72s; }
+.collected-car-ride--still .collected-car-ride__vehicle { left: calc(50% - var(--car-width) / 2); animation: none; }
+.collected-car-ride--still .collected-car-ride__heart { animation: none; opacity: 1; }
+.collected-car-ride--still .collected-car-ride__heart--one { left: 3%; top: 40%; }
+.collected-car-ride--still .collected-car-ride__heart--two { left: -8%; top: 22%; }
+.collected-car-ride--still .collected-car-ride__heart--three { left: 10%; top: 4%; }
+
+@keyframes collected-car-drive {
+  from { transform: translateX(calc(-1.3 * var(--car-width))); }
+  to { transform: translateX(calc(100vw + var(--car-width) * .3)); }
+}
+
+@keyframes collected-car-exhaust {
+  0% { opacity: 0; transform: translate(0, 0) scale(.6); }
+  20% { opacity: .85; }
+  100% { opacity: 0; transform: translate(-48px, -42px) scale(1.15) rotate(-12deg); }
+}

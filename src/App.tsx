@@ -10,6 +10,7 @@ import { GameProvider, useGame } from './game/GameProvider';
 import { canOpenChest } from './game/progress';
 import { PouchScene } from './scene/PouchScene';
 import { TableScene } from './scene/TableScene';
+import { KeyFlight, type KeyDeparture } from './scene/KeyFlight';
 import { SecretSpot } from './secrets/SecretSpot';
 import { secretImages } from './secrets/assets';
 import './scene/scene.css';
@@ -21,9 +22,11 @@ function Game() {
   const { playEffect } = useAudio();
   const [menuOpen, setMenuOpen] = useState(false);
   const [chestEntrance, setChestEntrance] = useState(false);
+  const [keyFlight, setKeyFlight] = useState<(KeyDeparture & { unlock: boolean }) | null>(null);
   const fullscreen = progress.scene.kind === 'chest' || progress.scene.kind === 'letter' || progress.scene.kind === 'finale';
 
   function openChest(animate: boolean) {
+    setKeyFlight(null);
     setChestEntrance(animate);
     send({ type: 'open-chest' });
     if (animate) playEffect('reveal');
@@ -36,10 +39,11 @@ function Game() {
         <TableScene
           completedPouches={progress.completedPouches}
           onOpenPouch={pouchId => {
+            setKeyFlight(null);
             send({ type: 'navigate', scene: { kind: 'pouch', pouchId } });
             playEffect('paper');
           }}
-          onOpenMenu={() => setMenuOpen(true)}
+          onOpenMenu={() => { setKeyFlight(null); setMenuOpen(true); }}
           onOpenChest={() => openChest(!progress.chestOpened)}
           onCheckLock={() => playEffect('locked')}
           soundControl={<SoundToggle />}
@@ -51,8 +55,15 @@ function Game() {
           </SecretSpot>}
         />
       </div>
-      {progress.scene.kind === 'pouch' && <PouchScene key={progress.scene.pouchId} pouchId={progress.scene.pouchId} onBack={() => {
-        if (canOpenChest(progress) && !progress.chestOpened) openChest(true);
+      {progress.scene.kind === 'table' && keyFlight && <KeyFlight departure={keyFlight} unlock={keyFlight.unlock} onComplete={() => {
+        setKeyFlight(null);
+        if (keyFlight.unlock) openChest(true);
+      }} />}
+      {progress.scene.kind === 'pouch' && <PouchScene key={progress.scene.pouchId} pouchId={progress.scene.pouchId} onBack={departure => {
+        if (departure) {
+          setKeyFlight({ ...departure, unlock: canOpenChest(progress) && !progress.chestOpened });
+          send({ type: 'navigate', scene: { kind: 'table' } });
+        } else if (canOpenChest(progress) && !progress.chestOpened) openChest(true);
         else send({ type: 'navigate', scene: { kind: 'table' } });
       }} />}
       {progress.scene.kind === 'chest' && <ChestScene animate={chestEntrance} />}

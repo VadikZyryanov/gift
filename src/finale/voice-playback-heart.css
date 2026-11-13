@@ -1,0 +1,24 @@
+.voice-message--with-heart { display: flex; align-items: center; gap: 7px; }
+.voice-playback-heart { position: relative; display: block; width: 18px; height: 28px; flex-shrink: 0; color: var(--berry); pointer-events: none; }
+.voice-playback-heart__pulse { position: absolute; inset: 5px 0; width: 18px; height: 18px; opacity: .55; transform-origin: center; animation: voice-heart-pulse 1.8s ease-in-out infinite paused; }
+.voice-playback-heart__particle { position: absolute; top: 3px; left: 3px; font-family: var(--handwriting); font-size: 1.25rem; line-height: 1; opacity: 0; animation: voice-heart-rise 3.6s ease-out infinite paused; }
+.voice-playback-heart__particle--two { animation-delay: 1.2s; }
+.voice-playback-heart__particle--three { animation-delay: 2.4s; }
+.voice-playback-heart[data-state='playing'] .voice-playback-heart__pulse,
+.voice-playback-heart[data-state='playing'] .voice-playback-heart__particle { animation-play-state: running; }
+.voice-playback-heart[data-state='idle'] .voice-playback-heart__particle { visibility: hidden; }
+.voice-playback-heart--still .voice-playback-heart__pulse { animation: none; }
+.voice-playback-heart--still[data-state='playing'] .voice-playback-heart__pulse { opacity: 1; }
+.voice-playback-heart--still .voice-playback-heart__particle { display: none; }
+
+@keyframes voice-heart-pulse {
+  0%, 100% { opacity: .55; transform: scale(.9); }
+  35% { opacity: 1; transform: scale(1.12); }
+  60% { opacity: .8; transform: scale(1); }
+}
+
+@keyframes voice-heart-rise {
+  0%, 8% { opacity: 0; transform: translate(0, 0) scale(.65); }
+  20% { opacity: .75; }
+  70%, 100% { opacity: 0; transform: translate(-10px, -38px) scale(1.05) rotate(-12deg); }
+}

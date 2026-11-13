@@ -1,0 +1,86 @@
+.table-dedication { position: relative; }
+.dedication__button { min-width: 44px; min-height: 44px; max-width: 100%; padding: 0 3px; border: 0; border-radius: 10px; background: none; color: inherit; font: inherit; line-height: inherit; }
+.dedication__button:focus-visible, .table-heart__button:focus-visible, .table-petals__button:focus-visible { outline: 2px solid var(--berry); outline-offset: 3px; }
+.dedication-bun-status { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.dedication-bun {
+  position: absolute;
+  z-index: 6;
+  top: calc(100% + 2px);
+  left: 50%;
+  display: grid;
+  width: min(250px, calc(100% - 12px));
+  justify-items: center;
+  padding: 6px 14px 12px;
+  border: 1px solid #d6b38b;
+  border-radius: 24px 24px 24px 7px;
+  background: radial-gradient(ellipse at 50% 10%, #fff7df, #fff0e5 80%);
+  box-shadow: 0 6px 24px #67354d29, inset 0 0 0 3px #fff9ed9c;
+  color: #82425b;
+  font-family: var(--handwriting);
+  font-size: 1.5rem;
+  line-height: 1.1;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: dedication-bun-arrive .35s ease-out both;
+}
+
+.dedication-bun__art { width: 108px; height: 77px; margin-bottom: 1px; }
+.table-heart { position: relative; z-index: 3; width: 152px; height: 44px; margin: -2px auto 4px; color: var(--berry); }
+.table-heart__flourish { position: absolute; inset: 12px 0 auto; width: 152px; height: 20px; pointer-events: none; }
+.table-heart__button { position: relative; display: grid; width: 44px; height: 44px; margin-inline: auto; padding: 7px; place-items: center; border: 0; border-radius: 50%; background: none; color: #b44c70; }
+.table-heart__button svg { width: 30px; height: 30px; filter: drop-shadow(0 2px 2px #8f315b24); transition: transform .2s ease; }
+.table-heart__button:hover svg { transform: scale(1.12); }
+.table-heart__button:active svg { transform: scale(.88); }
+.table-heart__particles { position: absolute; inset: 0; pointer-events: none; }
+.table-heart__burst { --heart-drift: 0px; position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+.table-heart__burst--1 { --heart-drift: -20px; }
+.table-heart__burst--2 { --heart-drift: 18px; }
+.table-heart__flight { position: absolute; top: -13px; left: -13px; width: 26px; height: 26px; color: #bd5278; filter: drop-shadow(0 0 5px #fff0d4a3); animation: table-heart-float 1.25s cubic-bezier(.22,.6,.35,1) both; }
+.table-heart__flight svg { width: 100%; height: 100%; }
+.table-heart__spark { --spark-x: -29px; --spark-y: -24px; position: absolute; top: -3px; left: -3px; width: 6px; height: 6px; background: #bc8c4c; clip-path: polygon(50% 0, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0 50%, 35% 35%); animation: table-heart-spark .7s ease-out both; }
+.table-heart__spark:nth-child(3) { --spark-x: 27px; --spark-y: -34px; width: 8px; height: 8px; }
+.table-heart__spark:nth-child(4) { --spark-x: -21px; --spark-y: 12px; background: #d9a9b2; }
+.table-heart__spark:nth-child(5) { --spark-x: 25px; --spark-y: 9px; width: 5px; height: 5px; }
+
+.table-petals { position: absolute; inset: 0; pointer-events: none; }
+.table-petals__button { position: absolute; z-index: 2; top: 91px; left: -8px; width: 68px; height: 64px; padding: 0; border: 0; border-radius: 45%; background: none; pointer-events: auto; }
+.table-petals__button:focus-visible { outline-offset: -4px; background: #fff5df26; }
+.table-petals__button:hover { background: radial-gradient(ellipse, #fff2dd3b, transparent 70%); }
+.table-petals__particles { position: absolute; z-index: 3; top: 114px; left: 25px; width: 0; height: 0; pointer-events: none; }
+.table-petals__burst { position: absolute; inset: 0; }
+.table-petals__burst--1 { transform: translate(-7px, -5px); }
+.table-petals__petal { --petal-x: -63px; --petal-y: 96px; --petal-turn: 135deg; --petal-delay: 0ms; position: absolute; top: -5px; left: -4px; width: 10px; height: 15px; border: 1px solid #bc66866b; border-radius: 75% 20% 70% 35%; background: radial-gradient(ellipse at 35% 25%, #ffe5dc, #db94ae 70%, #bf6c94); box-shadow: inset 1px 1px 2px #fff2dd80; transform-origin: 40% 70%; animation: table-petal-fall 1.8s cubic-bezier(.2,.48,.42,1) var(--petal-delay) both; }
+.table-petals__petal--2 { --petal-x: -105px; --petal-y: 124px; --petal-turn: -120deg; --petal-delay: 70ms; width: 8px; height: 12px; }
+.table-petals__petal--3 { --petal-x: -33px; --petal-y: 137px; --petal-turn: 220deg; --petal-delay: 150ms; }
+.table-petals__petal--4 { --petal-x: -125px; --petal-y: 73px; --petal-turn: -210deg; --petal-delay: 210ms; width: 7px; height: 11px; }
+.table-petals__petal--5 { --petal-x: -80px; --petal-y: 151px; --petal-turn: 180deg; --petal-delay: 270ms; width: 9px; height: 14px; }
+.table-petals__petal--6 { --petal-x: -16px; --petal-y: 87px; --petal-turn: -95deg; --petal-delay: 320ms; width: 8px; height: 12px; }
+.table-petals__petal--7 { --petal-x: -144px; --petal-y: 119px; --petal-turn: 270deg; --petal-delay: 380ms; width: 7px; height: 10px; }
+
+.table-heart[data-reduced-motion='true'] .table-heart__flight { transform: translate(20px, -30px) scale(.9); }
+.table-heart[data-reduced-motion='true'] .table-heart__spark { transform: translate(var(--spark-x), var(--spark-y)); }
+.table-petals[data-reduced-motion='true'] .table-petals__petal { opacity: .85; transform: translate(calc(var(--petal-x) * .5), calc(var(--petal-y) * .2)) rotate(var(--petal-turn)); }
+
+@keyframes dedication-bun-arrive {
+  from { opacity: 0; transform: translate(-50%, 7px) scale(.93); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+@keyframes table-heart-float {
+  0% { opacity: .9; transform: translate(0, 0) scale(.9); }
+  24% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--heart-drift), -112px) rotate(-8deg) scale(.65); }
+}
+
+@keyframes table-heart-spark {
+  from { opacity: 1; transform: translate(0, 0) scale(.5); }
+  to { opacity: 0; transform: translate(var(--spark-x), var(--spark-y)) scale(.8); }
+}
+
+@keyframes table-petal-fall {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0); }
+  12% { opacity: .95; }
+  75% { opacity: .8; }
+  100% { opacity: 0; transform: translate(var(--petal-x), var(--petal-y)) rotate(var(--petal-turn)); }
+}

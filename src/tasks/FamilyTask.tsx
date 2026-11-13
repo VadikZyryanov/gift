@@ -10,9 +10,10 @@ interface FamilyTaskProps {
   draft: FamilyDraft | undefined;
   onDraftChange: (draft: FamilyDraft) => void;
   onSolved: () => void;
+  onPetThomas?: () => (() => void) | undefined;
 }
 
-export function FamilyTask({ task, draft, onDraftChange, onSolved }: FamilyTaskProps) {
+export function FamilyTask({ task, draft, onDraftChange, onSolved, onPetThomas }: FamilyTaskProps) {
   const id = useId();
   const [showHint, setShowHint] = useState(false);
   const [cardOpen, setCardOpen] = useState(false);
@@ -73,7 +74,7 @@ export function FamilyTask({ task, draft, onDraftChange, onSolved }: FamilyTaskP
   return <section className="quiz-task family-task" aria-labelledby={`${id}-question`}>
     <h3 className="task-question" id={`${id}-question`}>{task.question}</h3>
     <p className="quiz-task__invitation">{task.caption}</p>
-    <FamilyPicture task={task} selectedMemberId={cardOpen ? member?.id : undefined} pausedMemberId={cardOpen ? member?.id : undefined} foundIds={foundIds} onSelect={selectMember} />
+    <FamilyPicture task={task} selectedMemberId={cardOpen ? member?.id : undefined} pausedMemberId={cardOpen ? member?.id : undefined} foundIds={foundIds} onSelect={selectMember} onPetThomas={onPetThomas} />
     <p className="family-task__progress" role="status">{allFound ? 'Все трое на своём месте. Все истории — в нашем сердце.' : `Нашли ${foundIds.length} из ${task.members.length}`}</p>
     {nextMember && <div className="family-search-hint">
       <button type="button" className="family-search-hint__button" onClick={() => setSearchHintId(nextMember.id)}>Подсказка для поиска</button>

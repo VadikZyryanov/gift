@@ -5,7 +5,7 @@ interface AudioSession {
   effectsEnabled: boolean;
   setEffectsEnabled: (enabled: boolean) => void;
   prepareEffects: () => void;
-  playEffect: (name: EffectName) => void;
+  playEffect: (name: EffectName) => (() => void) | undefined;
   registerVoice: (audio: HTMLAudioElement | null) => void;
   stopVoice: () => void;
   stopEffects: () => void;
@@ -79,6 +79,9 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       if (generation !== generationRef.current || !enabledRef.current || document.visibilityState === 'hidden' || (voiceRef.current && !voiceRef.current.paused)) return;
       cancelEffectRef.current = playSound(context, name);
     }).catch(() => { /* Unsupported or denied audio never blocks the game. */ });
+    return () => {
+      if (generation === generationRef.current) stopEffects();
+    };
   }
 
   useEffect(() => {

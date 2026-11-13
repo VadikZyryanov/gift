@@ -5,6 +5,7 @@ import { gameContent } from '../game/content';
 import { secretIds } from '../game/types';
 import { GiftSelection } from './GiftSelection';
 import { useAudio } from '../audio/AudioProvider';
+import { CollectedCar } from './CollectedCar';
 
 export function FinaleScene() {
   const { progress, send } = useGame();
@@ -20,7 +21,7 @@ export function FinaleScene() {
     <section className="secret-results" aria-label="Найденные маленькие тайны">
       <p className="secret-results__count" role="status">Маленькие тайны: {found.length} из {secretIds.length}</p>
       <div className="secret-results__collection">
-        {secretIds.map(id => <div key={id} className="secret-results__item">
+        {secretIds.map(id => id === 'black-g-class' && found.includes(id) ? <CollectedCar key={id} /> : <div key={id} className="secret-results__item">
           {found.includes(id) ? <>
             <img src={gameContent.secrets[id].image.src} alt="" width="160" height="160" />
             <span>{id === 'black-g-class' ? 'Чёрный Гелик' : id === 'green-dress' ? 'Зелёное платье' : 'Белый Bueno'}</span>

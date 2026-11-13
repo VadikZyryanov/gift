@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyOrnament } from '../components/KeyOrnament';
+import { useAudio } from '../audio/AudioProvider';
 import { ScenePanel } from '../components/ScenePanel';
 import { StorageNotice } from '../components/StorageNotice';
 import { gameContent } from '../game/content';
@@ -15,19 +16,22 @@ import { pouchImages } from './assets';
 import { SecretSpot } from '../secrets/SecretSpot';
 import { secretImages } from '../secrets/assets';
 import { KitKatFlight } from './KitKatFlight';
+import type { KeyDeparture } from './KeyFlight';
 
 interface PouchSceneProps {
   pouchId: PouchId;
-  onBack: () => void;
+  onBack: (departure?: KeyDeparture) => void;
 }
 
 export function PouchScene({ pouchId, onBack }: PouchSceneProps) {
   const { progress, send } = useGame();
+  const { playEffect } = useAudio();
   const completed = progress.completedPouches.includes(pouchId);
   const [wasCompletedOnOpen] = useState(completed);
   const [celebrating, setCelebrating] = useState(false);
   const finishCelebration = useCallback(() => setCelebrating(false), []);
   const rewardRef = useRef<HTMLParagraphElement>(null);
+  const keyRef = useRef<HTMLSpanElement>(null);
   const showReward = completed && !celebrating;
   const newReward = showReward && !wasCompletedOnOpen;
   const draft = progress.drafts[pouchId];
@@ -51,11 +55,23 @@ export function PouchScene({ pouchId, onBack }: PouchSceneProps) {
     switch (task.kind) {
       case 'quiz': return <QuizTask task={task} draft={draft?.kind === 'quiz' ? draft : undefined} {...callbacks} />;
       case 'phrase': return <PhraseTask task={task} draft={draft?.kind === 'phrase' ? draft : undefined} {...callbacks} />;
-      case 'family': return <FamilyTask task={task} draft={draft?.kind === 'family' ? draft : undefined} {...callbacks} />;
+      case 'family': return <FamilyTask task={task} draft={draft?.kind === 'family' ? draft : undefined} {...callbacks} onPetThomas={() => playEffect('purr')} />;
     }
   }
+
+  function returnToTable() {
+    if (!completed || wasCompletedOnOpen) {
+      onBack();
+      return;
+    }
+    const bounds = keyRef.current?.getBoundingClientRect();
+    const visible = bounds && bounds.top >= 0 && bounds.bottom <= window.innerHeight;
+    onBack({ pouchId, origin: visible
+      ? { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 }
+      : { x: window.innerWidth / 2, y: window.innerHeight * .65 } });
+  }
   return (
-    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`} entrance="heart" layout={pouchId === 'family' ? 'panorama' : undefined}>
+    <ScenePanel title={pouch.title} onBack={returnToTable} returnFocusId={`pouch-${pouchId}`} entrance="heart" layout={pouchId === 'family' ? 'panorama' : undefined}>
       <StorageNotice />
       {pouchId !== 'family' && <><p className="pouch-preview__subtitle">{pouch.subtitle}</p>
       <div className={`pouch-preview__art pouch-preview__art--${pouchId} pouch-preview__art--task${newReward ? ' pouch-preview__art--opening' : ''}`}>
@@ -66,16 +82,16 @@ export function PouchScene({ pouchId, onBack }: PouchSceneProps) {
       </div></>}
       {showReward ? (
         <section className={`pouch-reward${pouchId === 'family' ? ' pouch-reward--family' : ''}${newReward ? ' pouch-reward--new' : ''}`} aria-label="Записка и найденный ключ" aria-live="polite">
-          <span className="pouch-reward__key" aria-hidden="true"><KeyOrnament /></span>
+          <span ref={keyRef} className="pouch-reward__key" aria-hidden="true"><KeyOrnament /></span>
           <p className="pouch-reward__title" ref={rewardRef} tabIndex={-1}>Ключ найден</p>
           <p className="pouch-reward__note">{pouch.rewardNote}</p>
           {task.kind === 'family' && <>
-            <FamilyPicture task={task} foundIds={task.members.map(member => member.id)} />
+            <FamilyPicture task={task} foundIds={task.members.map(member => member.id)} onPetThomas={() => playEffect('purr')} />
             <FamilyTimeline task={task} />
           </>}
           {pouchId === 'proposal' && <article className="proposal-letter" aria-label={gameContent.proposalLetter.title}>
             <figure className="proposal-letter__photo">
-              <TaskImage {...gameContent.proposalLetter.image} />
+              <TaskImage {...gameContent.proposalLetter.image} affection />
               <figcaption className="proposal-letter__date">{gameContent.proposalLetter.date}</figcaption>
             </figure>
             <div className="proposal-letter__body">
@@ -83,7 +99,7 @@ export function PouchScene({ pouchId, onBack }: PouchSceneProps) {
               {gameContent.proposalLetter.stanzas.map(stanza => <p className="proposal-letter__stanza" key={stanza}>{stanza}</p>)}
             </div>
           </article>}
-          <button className="story-button" type="button" onClick={onBack}>{canOpenChest(progress) && !progress.chestOpened ? 'К сундуку' : 'Вернуться на стол'}</button>
+          <button className="story-button" type="button" onClick={returnToTable}>{canOpenChest(progress) && !progress.chestOpened ? 'К сундуку' : 'Вернуться на стол'}</button>
         </section>
       ) : celebrating && task.kind === 'quiz' ? (
         <KitKatFlight message={task.questions[task.questions.length - 1].successMessage} onComplete={finishCelebration} />

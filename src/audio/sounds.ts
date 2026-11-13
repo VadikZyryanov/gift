@@ -1,4 +1,4 @@
-export type EffectName = 'paper' | 'locked' | 'unlock' | 'found' | 'reveal' | 'gifts' | 'coins';
+export type EffectName = 'paper' | 'locked' | 'unlock' | 'found' | 'reveal' | 'gifts' | 'coins' | 'purr';
 
 // All layers belong to one cancellable effect; no downloads or background music.
 export function playSound(context: AudioContext, name: EffectName): () => void {
@@ -66,6 +66,14 @@ export function playSound(context: AudioContext, name: EffectName): () => void {
     tone(659.25, 0, .38, .032);
     tone(830.61, .07, .45, .023);
     tone(987.77, .14, .6, .018);
+  } else if (name === 'purr') {
+    // A short, low rumble: every pulse uses the same bounded source lifecycle.
+    for (let index = 0; index < 12; index++) {
+      const delay = index * .045;
+      tone(62, delay, .095, .035, 54);
+      tone(122, delay, .075, .009, 110);
+    }
+    rustle(0, .62, .025, 160);
   } else if (name === 'coins') {
     [1760, 2349.32, 3135.96].forEach((frequency, index) => {
       const delay = index * .09;

@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
+import { useReducedMotion } from '../animation/useReducedMotion';
 import { formatFamilyDate } from '../game/family';
 import type { FamilyMemberId, FamilyTaskDefinition } from '../game/types';
 import './family-task.css';
@@ -8,18 +9,89 @@ interface FamilyPictureProps {
   foundIds: readonly FamilyMemberId[];
   selectedMemberId?: FamilyMemberId | null;
   onSelect?: (memberId: FamilyMemberId) => void;
+  onPetThomas?: () => (() => void) | undefined;
   pausedMemberId?: FamilyMemberId;
 }
 
-export function FamilyPicture({ task, foundIds, selectedMemberId, onSelect, pausedMemberId }: FamilyPictureProps) {
+interface PetGesture {
+  pointerId: number;
+  x: number;
+  y: number;
+  lastY: number;
+  distance: number;
+  mode: 'pending' | 'pet' | 'pan';
+}
+
+export function FamilyPicture({ task, foundIds, selectedMemberId, onSelect, onPetThomas, pausedMemberId }: FamilyPictureProps) {
   const id = useId();
+  const reducedMotion = useReducedMotion();
   const viewportRef = useRef<HTMLDivElement>(null);
   const worldRef = useRef<HTMLDivElement>(null);
   const gesture = useRef({ x: 0, y: 0, scrollLeft: 0, moved: false });
+  const petGesture = useRef<PetGesture | null>(null);
+  const petTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelPurr = useRef<(() => void) | undefined>(undefined);
+  const lastPet = useRef(-Infinity);
+  const petCount = useRef(0);
+  const [petReaction, setPetReaction] = useState<number | null>(null);
   const [pan, setPan] = useState({ position: 0, fraction: 1 });
   const [failedRoom, setFailedRoom] = useState<string | null>(null);
   const [failedSprites, setFailedSprites] = useState<string | null>(null);
   const missingArt = failedRoom === task.image.src || task.members.some(member => failedSprites === member.sprites.image.src);
+  const canPetThomas = foundIds.includes('thomas');
+
+  useEffect(() => () => {
+    if (petTimer.current !== null) clearTimeout(petTimer.current);
+    cancelPurr.current?.();
+    petGesture.current = null;
+  }, []);
+
+  function petThomas() {
+    const now = performance.now();
+    if (now - lastPet.current < 700) return;
+    lastPet.current = now;
+    if (petTimer.current !== null) clearTimeout(petTimer.current);
+    cancelPurr.current?.();
+    cancelPurr.current = onPetThomas?.();
+    setPetReaction(++petCount.current);
+    petTimer.current = setTimeout(() => {
+      petTimer.current = null;
+      setPetReaction(null);
+    }, reducedMotion ? 1300 : 1000);
+  }
+
+  function getStrokeMode(event: PointerEvent) {
+    const current = petGesture.current;
+    if (!current || current.pointerId !== event.pointerId) return null;
+    const dx = event.clientX - current.x;
+    const dy = event.clientY - current.y;
+    if (current.mode === 'pending' && Math.hypot(dx, dy) > 8) {
+      current.mode = Math.abs(dy) > Math.abs(dx) * 1.25 ? 'pet' : 'pan';
+    }
+    return current.mode;
+  }
+
+  function strokeThomas(event: PointerEvent<HTMLButtonElement>) {
+    const current = petGesture.current;
+    if (!current || current.pointerId !== event.pointerId) return;
+    if (getStrokeMode(event) === 'pet') {
+      const bounds = event.currentTarget.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+        petGesture.current = null;
+        return;
+      }
+      current.distance += Math.abs(event.clientY - current.lastY);
+      if (current.distance >= 12) {
+        petThomas();
+        current.distance = 0;
+      }
+    }
+    current.lastY = event.clientY;
+  }
+
+  function endStroke(event: PointerEvent<HTMLButtonElement>) {
+    if (petGesture.current?.pointerId === event.pointerId) petGesture.current = null;
+  }
 
   function updatePan() {
     const viewport = viewportRef.current;
@@ -68,7 +140,7 @@ export function FamilyPicture({ task, foundIds, selectedMemberId, onSelect, paus
         const dx = event.clientX - gesture.current.x;
         const dy = event.clientY - gesture.current.y;
         if (Math.hypot(dx, dy) > 8) gesture.current.moved = true;
-        if (event.pointerType === 'mouse' && gesture.current.moved) {
+        if (event.pointerType === 'mouse' && gesture.current.moved && getStrokeMode(event) !== 'pet') {
           event.currentTarget.scrollLeft = gesture.current.scrollLeft - dx;
           event.preventDefault();
         }
@@ -85,6 +157,9 @@ export function FamilyPicture({ task, foundIds, selectedMemberId, onSelect, paus
           left: `${member.x}%`, top: `${member.y}%`, width: `${member.width}%`,
           '--family-frame-transform': sprites.rows === 2 ? 'translateY(-50%)' : 'translateX(-50%)',
         };
+        const isThomas = member.id === 'thomas';
+        const pettable = isThomas && found;
+        const strokeable = pettable && !missingArt;
         const content = <>
           {!missingArt && <span className="family-character__sprite" aria-hidden="true">
             <img src={sprites.image.src} alt="" width={sprites.image.width} height={sprites.image.height} draggable="false"
@@ -96,16 +171,36 @@ export function FamilyPicture({ task, foundIds, selectedMemberId, onSelect, paus
           </span>}
         </>;
         const className = `family-character family-character--${member.id}${found ? ' family-character--found' : ''}${selectedMemberId === member.id ? ' family-character--selected' : ''}${pausedMemberId === member.id ? ' family-character--paused' : ''}`;
-        return onSelect ? <button key={member.id} className={className} style={style} type="button"
-          aria-label={`${member.name}${found ? ', дата найдена' : ''}`} aria-pressed={selectedMemberId === member.id}
+        const character = onSelect || pettable ? <button key={member.id} className={className} style={isThomas ? undefined : style} type="button"
+          aria-label={onSelect ? `${member.name}${found ? ', дата найдена' : ''}` : 'Погладить Томаса'} aria-pressed={onSelect ? selectedMemberId === member.id : undefined}
+          onPointerDown={strokeable ? event => {
+            if (!event.isPrimary || event.button !== 0) return;
+            petGesture.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, lastY: event.clientY, distance: 0, mode: 'pending' };
+          } : undefined}
+          onPointerMove={strokeable ? strokeThomas : undefined} onPointerUp={strokeable ? endStroke : undefined}
+          onPointerCancel={strokeable ? endStroke : undefined} onPointerLeave={strokeable ? endStroke : undefined}
+          onLostPointerCapture={strokeable ? endStroke : undefined}
           onFocus={event => {
             if (!missingArt && event.currentTarget.matches(':focus-visible')) event.currentTarget.scrollIntoView?.({ block: 'nearest', inline: 'center' });
           }} onClick={event => {
             if (event.detail !== 0 && gesture.current.moved) return;
-            onSelect(member.id);
+            if (onSelect) onSelect(member.id);
+            else petThomas();
           }}>
           {content}
-        </button> : <div key={member.id} className={className} style={style}>{content}</div>;
+        </button> : <div key={member.id} className={className} style={isThomas ? undefined : style}>{content}</div>;
+        return isThomas ? <div key={member.id} className={`family-pet${strokeable ? ' family-pet--strokeable' : ''}${reducedMotion ? ' family-pet--reduced-motion' : ''}`} style={missingArt ? undefined : style}>
+          {character}
+          {pettable && <button type="button" className="family-pet__button" aria-label="Погладить Томаса" aria-describedby={`${id}-pet-help`}
+            onFocus={event => {
+              if (!missingArt && event.currentTarget.matches(':focus-visible')) event.currentTarget.scrollIntoView?.({ block: 'nearest', inline: 'center' });
+            }} onClick={event => {
+              if (event.detail !== 0 && gesture.current.moved) return;
+              petThomas();
+            }}><span aria-hidden="true">♥ </span>Погладить</button>}
+          {petReaction !== null && <span key={petReaction} className="family-pet__hearts" aria-hidden="true"><span>♥</span><span>♥</span><span>♥</span></span>}
+          <span className="family-pet__message" role="status">{petReaction !== null ? 'Мур-р-р ♥' : ''}</span>
+        </div> : character;
       })}
     </div>
     </div>
@@ -118,6 +213,7 @@ export function FamilyPicture({ task, foundIds, selectedMemberId, onSelect, paus
       </div>
       <button type="button" className="family-pan-controls__arrow" aria-label="Осмотреть комнату справа" disabled={pan.fraction >= 1 || pan.position >= .999} onClick={() => movePan(1)}>→</button>
     </div>}
+    {canPetThomas && <p className="family-pet-help" id={`${id}-pet-help`}>{missingArt ? 'Нажми «Погладить» рядом с Томасом.' : 'Погладь Томаса вверх-вниз или нажми «Погладить» рядом с ним.'}</p>}
   </div>;
 }
 
