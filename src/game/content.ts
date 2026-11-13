@@ -1,11 +1,12 @@
 import { journeyTask } from './journey';
 import { familyTask } from './family';
+import { giftCatalog } from './gifts';
 import beachImage from '../assets/content/beginning-beach.webp';
 import bouquetImage from '../assets/content/beginning-bouquet.webp';
 import cafeImage from '../assets/content/beginning-cafe.webp';
 import proposalImage from '../assets/content/proposal-evening.webp';
 import { secretImages } from '../secrets/assets';
-import type { GiftContent, LetterContent, PouchContent, PouchId, QuizTaskDefinition, SecretContent, SecretId } from './types';
+import type { LetterContent, PouchContent, PouchId, QuizTaskDefinition, SecretContent, SecretId } from './types';
 
 // Facts and order confirmed by the owner; hints, distractors and replies are draft copy.
 const beginningTask: QuizTaskDefinition = {
@@ -77,12 +78,12 @@ export const gameContent = {
   secrets: {
     'green-dress': {
       title: 'То самое зелёное платье',
-      text: 'Турция, 17 октября 2025-го. Ты в зелёном платье, а у нас впереди — новая глава. Как же я люблю, что в нашей истории есть этот день. И ты.',
+      text: 'Турция, 17 октября 2025-го. Ты в зелёном платье, а у нас впереди куча всего крутого. Как же я люблю, что в нашей истории есть этот день!',
       image: { src: secretImages.dress, alt: 'Зелёное платье с открытыми плечами, короткими объёмными рукавами и разрезом — рисунок по фотографии с предложения' },
     },
     'white-bueno': {
       title: 'Белый Bueno',
-      text: 'У меня есть маленький способ сказать, что я о тебе думаю: принести тебе твой любимый белый Bueno. Люблю радовать тебя даже в самый обычный день, булочка.',
+      text: 'У меня есть маленький способ сказать, что я о тебе думаю: принести тебе твой любимый белый Bueno. Люблю радовать тебя даже в самый обычный день!',
       image: { src: secretImages.bueno, alt: 'Белый Bueno в приоткрытой светлой обёртке' },
     },
     'black-g-class': {
@@ -91,7 +92,7 @@ export const gameContent = {
       image: { src: secretImages.car, alt: 'Нарисованная миниатюра чёрного Mercedes Гелика' },
     },
   } satisfies Record<SecretId, SecretContent>,
-  bonusMessage: 'Все маленькие тайны нашлись. А мою главную ты давно знаешь: я люблю тебя. Мне хочется, чтобы в нашей жизни всегда оставалось место для таких маленьких радостей — и для больших мечт на двоих.',
+  bonusMessage: 'Все маленькие тайны нашлись. А мою главную ты давно знаешь: я люблю тебя. Мне хочется, чтобы в нашей жизни всегда оставалось место для таких маленьких радостей — и для больших мечт на двоих. Но есть ещё одна тайна, она находится в шкафу над микроволновкой, проверь что там)',
   proposalLetter: {
     title: 'Слова того вечера',
     date: '17 октября 2025 · Турция',
@@ -103,13 +104,8 @@ export const gameContent = {
     ],
   },
   gifts: {
-    status: 'draft',
-    items: [
-      { id: 'spa', title: 'День для себя', description: 'Отдых, тишина и забота о себе. Немного времени, которое принадлежит только тебе.' },
-      { id: 'dinner', title: 'Ужин вдвоём', description: 'Выбрать уютное место и провести вечер вместе, без спешки.' },
-      { id: 'experience', title: 'Новое впечатление', description: 'Попробовать что-нибудь новое и сохранить ещё одно тёплое воспоминание.' },
-      { id: 'surprise', title: 'Маленький сюрприз', description: 'Оставить одну радость секретом — до самого момента вручения.' },
-    ] satisfies readonly GiftContent[],
+    status: 'ready',
+    items: giftCatalog,
   },
   letter: {
     status: 'draft',

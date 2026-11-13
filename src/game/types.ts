@@ -19,12 +19,16 @@ export interface PouchPreview {
 export const secretIds = ['green-dress', 'white-bueno', 'black-g-class'] as const;
 export type SecretId = (typeof secretIds)[number];
 
-export const giftIds = ['spa', 'dinner', 'experience', 'surprise'] as const;
+export const giftIds = [
+  'breakfast', 'massage', 'dinner', 'experience', 'day-off', 'blind-date',
+  'wishlist', 'lingerie', 'private-evening', 'overnight', 'car', 'hugs',
+] as const;
 export type GiftId = (typeof giftIds)[number];
 
 export interface GiftContent {
   id: GiftId;
   title: string;
+  price: number;
   description: string;
 }
 
@@ -161,8 +165,9 @@ export interface GameProgress {
   contentRevision: number;
   completedPouches: PouchId[];
   foundSecrets: SecretId[];
-  // Optional in legacy schema-v1 snapshots; storage normalizes it to an empty list.
-  selectedGiftIds?: GiftId[];
+  // Optional in legacy schema-v1 snapshots; storage restores the earned reward and purchases.
+  giftRewardEarned?: boolean;
+  purchasedGiftIds?: GiftId[];
   drafts: Partial<Record<PouchId, TaskDraft>>;
   chestOpened: boolean;
   letterOpened: boolean;
@@ -175,12 +180,13 @@ export type GameEvent =
   | { type: 'save-draft'; pouchId: PouchId; draft: TaskDraft }
   | { type: 'complete-pouch'; pouchId: PouchId }
   | { type: 'find-secret'; secretId: SecretId }
-  | { type: 'toggle-gift'; giftId: GiftId }
+  | { type: 'purchase-gift'; giftId: GiftId }
   | { type: 'open-chest' | 'open-letter' | 'show-finale' | 'open-second-bottom' }
   | { type: 'restart' };
 
 export interface GameSession {
   progress: GameProgress;
-  send: (event: GameEvent) => void;
+  // Resolves after dispatch; false means the reducer rejected or ignored the event.
+  send: (event: GameEvent) => Promise<boolean>;
   storageStatus: 'available' | 'unavailable' | 'recovered';
 }

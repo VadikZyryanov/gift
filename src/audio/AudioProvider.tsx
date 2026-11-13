@@ -4,6 +4,7 @@ import { playSound, type EffectName } from './sounds';
 interface AudioSession {
   effectsEnabled: boolean;
   setEffectsEnabled: (enabled: boolean) => void;
+  prepareEffects: () => void;
   playEffect: (name: EffectName) => void;
   registerVoice: (audio: HTMLAudioElement | null) => void;
   stopVoice: () => void;
@@ -59,8 +60,13 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       void contextRef.current?.suspend().catch(() => {});
     } else {
       // Called directly by a gesture so WebKit can unlock its audio context.
-      void getContext()?.resume().catch(() => {});
+      prepareEffects();
     }
+  }
+
+  function prepareEffects() {
+    if (!enabledRef.current || document.visibilityState === 'hidden') return;
+    void getContext()?.resume().catch(() => {});
   }
 
   function playEffect(name: EffectName) {
@@ -95,7 +101,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     };
   }, [stopVoice, stopEffects]);
 
-  return <AudioContextValue value={{ effectsEnabled, setEffectsEnabled, playEffect, registerVoice, stopVoice, stopEffects }}>{children}</AudioContextValue>;
+  return <AudioContextValue value={{ effectsEnabled, setEffectsEnabled, prepareEffects, playEffect, registerVoice, stopVoice, stopEffects }}>{children}</AudioContextValue>;
 }
 
 export function useAudio(): AudioSession {

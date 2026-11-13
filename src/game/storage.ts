@@ -1,8 +1,9 @@
 import { gameContent } from './content';
 import { canOpenChest, createInitialProgress, isSceneAllowed } from './progress';
-import { giftIds, pouchIds, secretIds, type GameProgress, type GameSession, type GiftId, type PouchId, type Scene, type SecretId, type TaskDefinition, type TaskDraft } from './types';
+import { normalizeGiftPurchases } from './gifts';
+import { pouchIds, secretIds, type GameProgress, type GameSession, type PouchId, type Scene, type SecretId, type TaskDefinition, type TaskDraft } from './types';
 
-const storageKey = 'gift:progress:v1';
+export const progressStorageKey = 'gift:progress:v1';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -80,8 +81,10 @@ function parseProgress(value: unknown, contentRevision: number): GameProgress | 
   if (!Array.isArray(value.foundSecrets) || !value.foundSecrets.every((id: unknown) =>
     isSecretId(id) || (typeof id === 'string' && legacySecretIds.includes(id)))) return null;
   if (typeof value.chestOpened !== 'boolean' || typeof value.letterOpened !== 'boolean' || typeof value.secondBottomOpened !== 'boolean') return null;
-  const savedGifts = value.selectedGiftIds ?? [];
+  // Legacy selectedGiftIds were reversible draft choices, never purchases.
+  const savedGifts = value.purchasedGiftIds ?? [];
   if (!Array.isArray(savedGifts) || !savedGifts.every((id: unknown) => typeof id === 'string')) return null;
+  if (value.giftRewardEarned !== undefined && typeof value.giftRewardEarned !== 'boolean') return null;
   const scene = parseScene(value.scene);
   if (!scene || !isRecord(value.drafts)) return null;
   const drafts: GameProgress['drafts'] = {};
@@ -91,10 +94,12 @@ function parseProgress(value: unknown, contentRevision: number): GameProgress | 
     if (!parsed) return null;
     drafts[id] = parsed;
   }
+  const completedPouches = [...new Set(value.completedPouches)];
+  const giftRewardEarned = value.giftRewardEarned === true || pouchIds.every(id => completedPouches.includes(id));
   const progress: GameProgress = {
     schemaVersion: 1, contentRevision,
-    completedPouches: [...new Set(value.completedPouches)], foundSecrets: [...new Set(value.foundSecrets.filter(isSecretId))],
-    selectedGiftIds: [...new Set(savedGifts.filter((id: unknown): id is GiftId => giftIds.some(giftId => giftId === id)))],
+    completedPouches, foundSecrets: [...new Set(value.foundSecrets.filter(isSecretId))],
+    giftRewardEarned, purchasedGiftIds: normalizeGiftPurchases(savedGifts, giftRewardEarned),
     drafts, chestOpened: value.chestOpened, letterOpened: value.letterOpened,
     secondBottomOpened: value.secondBottomOpened, scene,
   };
@@ -107,7 +112,7 @@ function parseProgress(value: unknown, contentRevision: number): GameProgress | 
 export function readProgress(storage: Storage, contentRevision: number): Pick<GameSession, 'progress'> & { status: GameSession['storageStatus'] } {
   let raw: string | null;
   try {
-    raw = storage.getItem(storageKey);
+    raw = storage.getItem(progressStorageKey);
   } catch {
     return { progress: createInitialProgress(contentRevision), status: 'unavailable' };
   }
@@ -133,7 +138,7 @@ export function readProgress(storage: Storage, contentRevision: number): Pick<Ga
 
 export function writeProgress(storage: Storage, progress: GameProgress): boolean {
   try {
-    storage.setItem(storageKey, JSON.stringify(progress));
+    storage.setItem(progressStorageKey, JSON.stringify(progress));
     return true;
   } catch {
     return false;

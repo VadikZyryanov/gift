@@ -42,22 +42,49 @@
 .voice-message__status { margin: 12px 0 0; font-size: .8125rem; line-height: 1.75; overflow-wrap: anywhere; }
 .letter-afterword { margin-top: 32px; padding-top: 12px; }
 .letter-afterword__heart { display: block; margin: auto; color: #b88b50; font-family: var(--handwriting); font-size: 2.5rem; }
-.gift-selection { margin-block: 32px 48px; }
-.gift-selection__title { margin: 8px 0 16px; color: #74364e; font-family: var(--handwriting); font-size: 2.2rem; line-height: 1.2; overflow-wrap: anywhere; }
+.gift-selection { container-type: inline-size; margin-block: 32px 48px; }
+.gift-selection__title { margin: 8px 0 16px; color: #74364e; font-family: var(--handwriting); font-size: 2.2rem; line-height: 1.2; overflow-wrap: anywhere; outline: none; }
 .gift-selection__intro { margin: 0; font-size: .9375rem; line-height: 1.8; overflow-wrap: anywhere; }
+.gift-selection__rules { margin: 16px 0 24px; color: #74364e; font-size: .875rem; line-height: 1.8; overflow-wrap: anywhere; }
+.gift-wallet { position: sticky; top: 0; z-index: 2; padding: 16px 12px 12px; border: 1px solid #c9a773; border-radius: 4px 16px 4px 16px; background: #fff4e3; box-shadow: 0 6px 18px #79435012; }
+.gift-wallet__totals { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)); gap: 16px; margin: 0; }
+.gift-wallet__totals dt { color: #78546a; font-size: .75rem; line-height: 1.6; overflow-wrap: anywhere; }
+.gift-wallet__totals dd { margin: 4px 0 0; color: #74364e; font-size: 1.0625rem; font-weight: 600; line-height: 1.5; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.gift-wallet__remaining dd { color: #9c365c; }
+.gift-wallet__currency { margin: 8px 0 0; color: #78546a; font-size: .6875rem; line-height: 1.6; }
 .gift-selection__cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
 .gift-card { display: flex; flex-direction: column; position: relative; min-width: 0; padding: 20px 16px 16px; border: 1px solid #d2b49a; border-radius: 3px 18px 3px 18px; background: linear-gradient(135deg, #fff9ed, #f9e6d9); box-shadow: 0 8px 20px #7943500a; text-align: left; }
 .gift-card--selected { border: 2px solid #9c365c; padding: 19px 15px 15px; background: linear-gradient(135deg, #fff6e7, #f5d7de); }
+.gift-card--unavailable { background: #f4e8df; border-color: #cdbdb2; }
+.gift-card--unavailable .gift-card__state { color: #78546a; }
 .gift-card__number { margin-bottom: 18px; color: #a87b4a; font-family: var(--handwriting); font-size: 1.5rem; line-height: 1; }
 .gift-card__title { color: #74364e; font-size: 1rem; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.gift-card__price { display: block; margin: 14px 0 0; color: #9c365c; font-size: 1.125rem; font-weight: 600; line-height: 1.5; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.gift-card__price > span { display: block; color: #78546a; font-size: .6875rem; font-weight: 400; }
 .gift-card__description { display: block; flex: 1; margin-top: 10px; font-size: .75rem; line-height: 1.8; overflow-wrap: anywhere; }
-.gift-card__state { display: block; margin-top: 20px; color: #9c365c; font-size: .8125rem; line-height: 1.5; overflow-wrap: anywhere; }
+.gift-card__state { display: block; margin-top: auto; padding-top: 20px; color: #9c365c; font-size: .8125rem; line-height: 1.5; overflow-wrap: anywhere; }
 .gift-card__state > span { margin-right: 4px; }
 .gift-selection__summary { margin-top: 24px; padding: 20px 16px; border-block: 1px solid #c8a9ba66; }
 .gift-selection__summary > p { margin: 8px 0; line-height: 1.75; overflow-wrap: anywhere; }
 .gift-selection__saved, .gift-selection__copy-status { color: #78546a; font-size: .75rem; }
 .gift-selection__fallback { display: block; width: 100%; margin-top: 16px; padding: 12px; border: 1px solid #c8a9ba; border-radius: 4px; background: #fffaf0; color: var(--plum); font: inherit; font-size: .8125rem; line-height: 1.8; resize: vertical; }
-@media (max-width: 380px) { .gift-selection__cards { grid-template-columns: minmax(0, 1fr); } }
+.gift-purchase-dialog { width: min(calc(100% - 32px), 440px); max-width: calc(100% - 32px); max-height: calc(100dvh - 40px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); margin: auto; padding: 24px; overflow-y: auto; overscroll-behavior: contain; border: 1px solid #c9a773; border-radius: 4px 24px 4px 24px; background: #fff4e3; color: var(--plum); box-shadow: 0 20px 80px #45203e33; text-align: center; }
+.gift-purchase-dialog::backdrop { background: #422c4877; backdrop-filter: blur(4px); }
+.gift-purchase-dialog__heart { margin: 0 0 8px; color: #b88b50; font-family: var(--handwriting); font-size: 2rem; line-height: 1; }
+.gift-purchase-dialog h2 { margin: 0; color: #74364e; font-family: var(--handwriting); font-size: clamp(1.25rem, 7vw, 2rem); line-height: 1.2; overflow-wrap: anywhere; }
+.gift-purchase-dialog__name { margin: 20px 0; color: #74364e; font-size: 1rem; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; }
+.gift-purchase-dialog__totals { display: grid; gap: 12px; margin: 0; }
+.gift-purchase-dialog__totals dt { color: #78546a; font-size: .75rem; line-height: 1.6; }
+.gift-purchase-dialog__totals dd { margin: 4px 0 0; color: #9c365c; font-size: 1rem; line-height: 1.6; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.gift-purchase-dialog__rules, .gift-purchase-dialog__message { margin: 20px 0 0; font-size: .8125rem; line-height: 1.8; overflow-wrap: anywhere; }
+.gift-purchase-dialog__message { color: #9c365c; }
+.gift-purchase-dialog__actions .story-button { margin-top: 16px; }
+@container (width < 20rem) {
+  .gift-selection__cards { grid-template-columns: minmax(0, 1fr); }
+  .gift-wallet { position: static; }
+  .gift-wallet__remaining { grid-column: 1 / -1; }
+}
+@media (max-height: 600px) { .gift-wallet { position: static; } }
 @keyframes chest-light { 0%, 12% { opacity: 0; transform: scale(.6); } 55% { opacity: 1; transform: scale(1.35); } 100% { opacity: 1; transform: scale(1); } }
 @keyframes chest-closed { 0%, 12% { opacity: 1; transform: scale(.72); } 23% { opacity: 0; transform: scale(.78); } 100% { opacity: 0; transform: scale(1); } }
 @keyframes chest-open { 0%, 15% { opacity: 0; transform: scale(.72); } 40% { opacity: 1; transform: scale(1.08); } 65% { opacity: 1; transform: scale(1.04); } 100% { opacity: .7; transform: scale(.9); } }

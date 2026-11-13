@@ -1,4 +1,4 @@
-export type EffectName = 'paper' | 'locked' | 'unlock' | 'found' | 'reveal' | 'gifts';
+export type EffectName = 'paper' | 'locked' | 'unlock' | 'found' | 'reveal' | 'gifts' | 'coins';
 
 // All layers belong to one cancellable effect; no downloads or background music.
 export function playSound(context: AudioContext, name: EffectName): () => void {
@@ -66,6 +66,15 @@ export function playSound(context: AudioContext, name: EffectName): () => void {
     tone(659.25, 0, .38, .032);
     tone(830.61, .07, .45, .023);
     tone(987.77, .14, .6, .018);
+  } else if (name === 'coins') {
+    [1760, 2349.32, 3135.96].forEach((frequency, index) => {
+      const delay = index * .09;
+      tone(frequency, delay, .24, .035);
+      tone(frequency * 2.76, delay, .075, .007);
+      tone(frequency * 4.1, delay, .04, .003);
+    });
+    tone(1046.5, .3, .45, .025);
+    tone(1567.98, .31, .4, .018);
   } else if (name === 'gifts') {
     const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98, 2093];
     notes.forEach((frequency, index) => {
