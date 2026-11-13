@@ -5,10 +5,11 @@ import beachImage from '../assets/content/beginning-beach.webp';
 import bouquetImage from '../assets/content/beginning-bouquet.webp';
 import cafeImage from '../assets/content/beginning-cafe.webp';
 import proposalImage from '../assets/content/proposal-evening.webp';
+import voiceMessage from '../assets/content/voice-message.m4a';
 import { secretImages } from '../secrets/assets';
 import type { LetterContent, PouchContent, PouchId, QuizTaskDefinition, SecretContent, SecretId } from './types';
 
-// Facts and order confirmed by the owner; hints, distractors and replies are draft copy.
+// Facts, order and copy confirmed by the owner.
 const beginningTask: QuizTaskDefinition = {
   kind: 'quiz',
   questions: [
@@ -66,10 +67,10 @@ const beginningTask: QuizTaskDefinition = {
   ],
 };
 
-// Beginning and journey use owner-supplied photos; remaining copy/art still need personal review.
+// The owner approved the personal content and supplied the letter's voice recording.
 export const gameContent = {
   revision: 5,
-  status: 'draft',
+  status: 'ready',
   title: 'KitKat в чемодане',
   dedication: 'Для моей булочки',
   instruction: 'Выбери сумочку — в каждой маленькая тайна.',
@@ -112,16 +113,16 @@ export const gameContent = {
     greeting: 'Настя, любимая моя! ❤️',
     paragraphs: [
       'Ты не представляешь, как я рад, что каждый день могу быть рядом с тобой. Я каждый раз с улыбкой вспоминаю, как мы только начинали общаться. Тогда я даже представить не мог, что ты станешь моей женой, что у нас будет ребёнок и что из нашего общения вырастет целая семья. 🥰',
-      'А сейчас я хочу, чтобы наша история продолжалась всю жизнь. Чтобы мы вместе достигали новых высот, радовались самым счастливым моментам и вместе проходили через сложные. Я точно знаю, что ничего не может нас разлучить. Ты всегда можешь на меня положиться. Я буду твоей опорой и самым преданным тебе человеком. 🫂❤️',
+      'А сейчас я хочу, чтобы наша история продолжалась всю жизнь. Чтобы мы вместе достигали новых высот, радовались самым счастливым моментам и вместе проходили через сложные. Я точно знаю, что ничего нас не сможет разлучить. Ты всегда можешь на меня положиться. Я буду твоей опорой и самым преданным тебе человеком. 🫂❤️',
       'Я люблю, когда ты меня обнимаешь, люблю, как ты меня целуешь. 😘 Люблю, когда делаешь мне комплименты и подарки, когда говоришь, что хочешь прожить со мной всю жизнь. Даже когда ты ревнуешь, я понимаю, что это от любви ко мне. Все эти моменты для меня очень много значат.',
       'Я тебя просто обожаю. И прямо сейчас мне хочется обнять тебя, прижать к себе сильно-сильно и в очередной раз сказать, как же сильно я тебя люблю. 🫂💋❤️',
     ],
     signature: 'Собрал с любовью) Для тебя!',
-    voiceSrc: null,
+    voiceSrc: voiceMessage,
   } satisfies LetterContent,
   pouches: {
     beginning: {
-      status: 'draft',
+      status: 'ready',
       title: 'Начало',
       subtitle: 'Сладкая маленькая тайна',
       description: 'Некоторые истории начинаются с маленькой сладости. А потом становятся целым миром.',
@@ -129,7 +130,7 @@ export const gameContent = {
       rewardNote: 'Одна маленькая сладость стала названием песни для тебя. А ты — моей самой любимой историей. Этот ключ твой.',
     },
     journey: {
-      status: 'draft',
+      status: 'ready',
       title: 'Далеко от дома',
       subtitle: 'Наши маленькие побеги',
       description: 'Важнее любого места на карте — тот, кто рядом. У этой сумочки есть своя история о нас.',
@@ -137,7 +138,7 @@ export const gameContent = {
       rewardNote: 'Столько мест и столько воспоминаний на двоих. С тобой любое место становится особенным. Пусть впереди будет ещё много наших маленьких побегов. Этот ключ твой.',
     },
     proposal: {
-      status: 'draft',
+      status: 'ready',
       title: 'Один вопрос',
       subtitle: 'Новая глава нашей истории',
       description: 'Есть вопросы, после которых начинается новая глава. Самая тёплая, самая наша.',
@@ -161,7 +162,7 @@ export const gameContent = {
       rewardNote: 'И я подумал: «Почему б и нет?»\n\n17 октября 2025 года, наша вторая поездка в Турцию. В тот вечер я задал тебе самый важный вопрос. А теперь у нас есть целая жизнь, чтобы наполнять её нашими историями.',
     },
     family: {
-      status: 'draft',
+      status: 'ready',
       title: 'Самое дорогое',
       subtitle: 'Больше, чем целый мир',
       description: 'Мягкие лапы, верный хвост и самые маленькие ладошки. У каждого — своё место в нашей истории.',

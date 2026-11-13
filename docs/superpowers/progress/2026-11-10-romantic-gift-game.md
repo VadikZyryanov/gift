@@ -1,5 +1,26 @@
 # Implementation ledger — plan: docs/superpowers/plans/2026-11-10-romantic-gift-game-implementation.md
 
+## Stage 6 / Voice recording and owner acceptance — 13 November
+
+- Owner confirmed final wording, a full manual playthrough and physical
+  iPhone/Yandex checks before supplying the recording. This is owner acceptance,
+  not a new automated regression or a separate VoiceOver confirmation.
+- Added the supplied iPhone Voice Memos file as `src/assets/content/voice-message.m4a`
+  and connected it through `gameContent.letter.voiceSrc`. The existing player uses
+  `preload="none"`, explicit playback, pause and visibility/navigation cleanup.
+- FFmpeg remuxed AAC without re-encoding, removed source metadata/chapters and
+  enabled fast start. Compressed audio stream hashes match the original exactly;
+  the resulting file is 581 589 bytes, mono 48 kHz, about 70 seconds.
+- Marked approved overall/pouch content ready; kept revision 5, answers, progress
+  and the owner's existing wording edit unchanged. Updated current content,
+  release documentation and the remaining physical-device audio checklist.
+- Verification: `npm run build` passed (TypeScript + 89 transformed modules);
+  the versioned M4A is present in `dist/assets`. Full FFmpeg decode reported no
+  errors. `git diff --check` passed before this ledger-only addition.
+- Tests were not created, modified or executed. No dependencies or Git operations,
+  upload or deployment. New-recording playback/pause/background behavior still
+  needs physical-device acceptance; original plan test/CI items remain deferred.
+
 ## Stage 6 / Beginning — technically complete, awaiting owner review
 
 - Owner supplied beach, bouquet and cafe images; specified answer edits, success-photo slides and a left-to-right KitKat flight before the key. Clarified heart expands to reveal an ordinary question dialog.

@@ -14,6 +14,8 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const requestRef = useRef(0);
   const [voiceState, setVoiceState] = useState<VoiceState>('idle');
+  const voiceActive = voiceState === 'playing' || voiceState === 'loading';
+  const voiceActionLabel = voiceState === 'playing' ? 'Пауза' : voiceState === 'loading' ? 'Отменить воспроизведение' : voiceState === 'error' ? 'Попробовать ещё раз' : voiceState === 'paused' ? 'Продолжить послание' : 'Послушать послание';
   const attachVoice = useCallback((element: HTMLAudioElement | null) => {
     audioRef.current = element;
     registerVoice(element);
@@ -69,20 +71,26 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
     <StorageNotice />
     {letter.status === 'draft' && <p className="content-draft">Черновик письма — окончательные слова ещё впереди.</p>}
     <article className="love-letter" aria-label="Письмо для тебя">
-      <p className="love-letter__greeting">{letter.greeting}</p>
+      <header className="love-letter__header">
+        <p className="love-letter__greeting">{letter.greeting}</p>
+        {letter.voiceSrc && <div className="voice-message">
+          <audio key={letter.voiceSrc} ref={attachVoice} src={letter.voiceSrc} preload="none"
+            onPause={() => { setVoiceState(current => current === 'playing' ? 'paused' : current); }}
+            onEnded={() => setVoiceState('paused')}
+            onError={() => { requestRef.current++; setVoiceState('error'); }} />
+          <button className="voice-message__button" type="button" aria-label={voiceActionLabel} title={voiceActionLabel}
+            onClick={() => { void toggleVoice(); }}>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d={voiceActive ? 'M6 5h4v14H6zM14 5h4v14h-4z' : 'm8 5 11 7-11 7V5Z'} />
+            </svg>
+          </button>
+          <span className="voice-message__status" role="status">{voiceState === 'loading' ? 'Открываю послание…' : voiceState === 'playing' ? 'Послание звучит.' : voiceState === 'paused' ? 'Послание на паузе.' : ''}</span>
+        </div>}
+      </header>
+      {letter.voiceSrc && voiceState === 'error' && <p className="voice-message__error" role="status">Запись пока не удалось включить. Письмо можно прочитать, а голос попробовать ещё раз.</p>}
       {letter.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
       <p className="love-letter__signature">{letter.signature}</p>
     </article>
-    {letter.voiceSrc && <section className="voice-message" aria-label="Голосовое послание">
-      <audio key={letter.voiceSrc} ref={attachVoice} src={letter.voiceSrc} preload="none"
-        onPause={() => { setVoiceState(current => current === 'playing' ? 'paused' : current); }}
-        onEnded={() => setVoiceState('paused')}
-        onError={() => { requestRef.current++; setVoiceState('error'); }} />
-      <button className="story-button story-button--quiet" type="button" onClick={() => { void toggleVoice(); }}>
-        {voiceState === 'playing' ? 'Пауза' : voiceState === 'loading' ? 'Отменить воспроизведение' : voiceState === 'error' ? 'Попробовать ещё раз' : voiceState === 'paused' ? 'Продолжить послание' : 'Послушать послание'}
-      </button>
-      <p className="voice-message__status" role="status">{voiceState === 'error' ? 'Запись пока не удалось включить. Письмо можно прочитать, а голос попробовать ещё раз.' : voiceState === 'loading' ? 'Открываю послание…' : voiceState === 'playing' ? 'Послание звучит. Можно поставить на паузу.' : 'Голос включается только по твоему нажатию.'}</p>
-    </section>}
     <section className="letter-afterword" aria-label="Продолжение истории">
       <span className="letter-afterword__heart" aria-hidden="true">♡</span>
       <p className="finale-handwriting">А теперь — немного радости для тебя.</p>
