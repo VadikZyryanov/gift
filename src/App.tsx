@@ -37,10 +37,11 @@ function Game() {
           completedPouches={progress.completedPouches}
           onOpenPouch={pouchId => {
             send({ type: 'navigate', scene: { kind: 'pouch', pouchId } });
-            if (pouchId === 'beginning' || pouchId === 'journey') playEffect('paper');
+            playEffect('paper');
           }}
           onOpenMenu={() => setMenuOpen(true)}
           onOpenChest={() => openChest(!progress.chestOpened)}
+          onCheckLock={() => playEffect('locked')}
           soundControl={<SoundToggle />}
           flowerSecret={<SecretSpot secretId="white-bueno" label="Белая обёртка" className="secret-spot--bueno">
             <img src={secretImages.bueno} alt="" width="640" height="426" draggable="false" />

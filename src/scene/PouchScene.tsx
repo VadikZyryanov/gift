@@ -55,7 +55,7 @@ export function PouchScene({ pouchId, onBack }: PouchSceneProps) {
     }
   }
   return (
-    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`} entrance={pouchId === 'beginning' || pouchId === 'journey' ? 'heart' : undefined} layout={pouchId === 'family' ? 'panorama' : undefined}>
+    <ScenePanel title={pouch.title} onBack={onBack} returnFocusId={`pouch-${pouchId}`} entrance="heart" layout={pouchId === 'family' ? 'panorama' : undefined}>
       <StorageNotice />
       {pouchId !== 'family' && <><p className="pouch-preview__subtitle">{pouch.subtitle}</p>
       <div className={`pouch-preview__art pouch-preview__art--${pouchId} pouch-preview__art--task${newReward ? ' pouch-preview__art--opening' : ''}`}>

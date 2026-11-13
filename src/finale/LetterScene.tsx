@@ -61,7 +61,7 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
     }
   }
 
-  return <FinaleLayout title="Для моей булочки" className="letter-page" onBack={() => {
+  return <FinaleLayout title="Для моей любимки" className="letter-page" onBack={() => {
     stopVoice();
     stopEffects();
     send({ type: 'navigate', scene: { kind: 'table' } });
@@ -89,7 +89,7 @@ export function LetterScene({ letter = gameContent.letter }: { letter?: LetterCo
       <button className="story-button" type="button" onClick={() => {
         stopVoice();
         send({ type: 'show-finale' });
-        playEffect('paper');
+        playEffect('gifts');
       }}>Перейти к подаркам</button>
     </section>
   </FinaleLayout>;

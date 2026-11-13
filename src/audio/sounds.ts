@@ -1,4 +1,4 @@
-export type EffectName = 'paper' | 'unlock' | 'found' | 'reveal';
+export type EffectName = 'paper' | 'locked' | 'unlock' | 'found' | 'reveal' | 'gifts';
 
 // All layers belong to one cancellable effect; no downloads or background music.
 export function playSound(context: AudioContext, name: EffectName): () => void {
@@ -56,10 +56,29 @@ export function playSound(context: AudioContext, name: EffectName): () => void {
   if (name === 'paper') {
     rustle(0, .32, .055, 1500);
     rustle(.1, .24, .025, 2800);
+  } else if (name === 'locked') {
+    for (const [delay, volume] of [[0, .055], [.12, .04], [.26, .025]] as const) {
+      tone(180, delay, .085, volume, 100);
+      tone(1680, delay, .045, volume * .3, 1300);
+      rustle(delay, .065, volume, 2400);
+    }
   } else if (name === 'found') {
     tone(659.25, 0, .38, .032);
     tone(830.61, .07, .45, .023);
     tone(987.77, .14, .6, .018);
+  } else if (name === 'gifts') {
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98, 2093];
+    notes.forEach((frequency, index) => {
+      const delay = index * .085;
+      tone(frequency, delay, .85, .034 - index * .002);
+      tone(frequency * 2, delay, .28, .005);
+      tone(frequency, delay + .16, .85, .008);
+    });
+    [261.63, 329.63, 392, 523.25].forEach((frequency, index) => {
+      tone(frequency, .52 + index * .035, 1.65, .015);
+    });
+    tone(2637.02, .68, 1, .009);
+    tone(3135.96, .8, .9, .006);
   } else {
     tone(880, 0, .13, .045, 460);
     tone(1320, .035, .11, .014, 660);

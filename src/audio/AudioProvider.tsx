@@ -13,8 +13,8 @@ interface AudioSession {
 const AudioContextValue = createContext<AudioSession | null>(null);
 
 export function AudioProvider({ children }: { children: ReactNode }) {
-  const [effectsEnabled, setEnabled] = useState(false);
-  const enabledRef = useRef(false);
+  const [effectsEnabled, setEnabled] = useState(true);
+  const enabledRef = useRef(true);
   const contextRef = useRef<AudioContext | null>(null);
   const voiceRef = useRef<HTMLAudioElement | null>(null);
   const cancelEffectRef = useRef<(() => void) | null>(null);

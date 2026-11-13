@@ -9,7 +9,7 @@ import { Envelope } from './Envelope';
 
 export function ChestScene({ animate = false }: { animate?: boolean }) {
   const { send } = useGame();
-  const { playEffect, stopVoice, stopEffects } = useAudio();
+  const { stopVoice, stopEffects } = useAudio();
   const [entering, setEntering] = useState(() => animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   useEffect(() => {
@@ -54,8 +54,8 @@ export function ChestScene({ animate = false }: { animate?: boolean }) {
     </div>
     <div className="chest-page__envelope" inert={entering} aria-hidden={entering}>
       <Envelope onOpen={() => {
+        stopEffects();
         send({ type: 'open-letter' });
-        playEffect('paper');
       }} />
     </div>
     {entering && <button className="chest-page__skip" type="button" onClick={() => setEntering(false)}>Пропустить анимацию</button>}

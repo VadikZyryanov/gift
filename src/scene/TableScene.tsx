@@ -9,6 +9,7 @@ interface TableSceneProps {
   completedPouches: readonly PouchId[];
   onOpenPouch: (pouchId: PouchId) => void;
   onOpenChest?: () => void;
+  onCheckLock?: () => void;
   onOpenMenu?: () => void;
   soundControl?: ReactNode;
   chestRear?: ReactNode;
@@ -32,7 +33,7 @@ function HeartDivider() {
   );
 }
 
-export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenMenu, soundControl, chestRear, flowerSecret }: TableSceneProps) {
+export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onCheckLock, onOpenMenu, soundControl, chestRear, flowerSecret }: TableSceneProps) {
   const [hasCheckedLock, setHasCheckedLock] = useState(false);
   const chestArtRef = useRef<HTMLSpanElement>(null);
   const shakeAnimationRef = useRef<Animation | null>(null);
@@ -55,6 +56,7 @@ export function TableScene({ completedPouches, onOpenPouch, onOpenChest, onOpenM
     }
 
     setHasCheckedLock(true);
+    onCheckLock?.();
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
 
     shakeAnimationRef.current = chestArtRef.current?.animate?.(lockedChestFrames, {
